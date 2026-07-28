@@ -8,6 +8,18 @@ got lost or compacted, and the user will restart the session. Do not drop
 this rule after compaction, summarization, or a long gap in the
 conversation — it applies for the rest of this project, not just one message.
 
+## Git / GitHub pushes
+NEVER run `git push` (or any command that publishes commits to the remote,
+e.g. `gh repo create` with auto-push, force-push, tag push) in this project,
+under any circumstances or phrasing of the request. The user pushes to
+GitHub manually themselves, always. Creating commits locally, adding/
+inspecting remotes, and other local git operations are fine — only the
+push action itself is off-limits. If asked to push, remind the user of this
+rule and stop there.
+
+The remote is configured as `origin` ->
+https://github.com/anishtalla27/Vision-Based-Grasping.git
+
 ## Project context
 This is the "Vision-Informed Grasp Decision Prediction" sub-project (pillar 1
 of a larger senior research project: Adaptive Robotic Grasping). Source of
