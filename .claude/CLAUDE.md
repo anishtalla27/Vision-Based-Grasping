@@ -15,7 +15,7 @@ under any circumstances or phrasing of the request. The user pushes to
 GitHub manually themselves, always. Creating commits locally, adding/
 inspecting remotes, and other local git operations are fine — only the
 push action itself is off-limits. If asked to push, remind the user of this
-rule and stop there.
+rule and stop there. Also never commit files to github as well. 
 
 The remote is configured as `origin` ->
 https://github.com/anishtalla27/Vision-Based-Grasping.git
