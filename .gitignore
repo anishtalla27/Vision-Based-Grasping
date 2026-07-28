@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+ENV/
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# PyTorch / ML artifacts
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+checkpoints/
+runs/
+lightning_logs/
+
+# Weights & Biases
+wandb/
+
+# Data
+data/raw/
+data/interim/
+data/external/
+*.h5
+*.hdf5
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
