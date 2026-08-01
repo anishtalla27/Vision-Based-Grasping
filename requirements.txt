@@ -1,3 +1,14 @@
 huggingface_hub
 wandb
 python-dotenv
+
+# Used by scripts/cornell_object_grouping.py (the object-wise split). These
+# were installed but never listed, so a clean reinstall from this file alone
+# used to break that script.
+numpy
+scipy
+pillow
+
+# System A onward: COCO-pretrained detector, and System B training later.
+torch
+torchvision
