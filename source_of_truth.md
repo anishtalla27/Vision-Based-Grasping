@@ -206,6 +206,28 @@ These aren't part of the technical spec but are operating rules for how work get
 - **Model/effort/plan-mode should be specified per prompt**, not left to default: Opus 4.8 at high effort for judgment-heavy design work (thresholds, evaluation logic, anything touching ground truth), Sonnet 5 at medium/low for well-specified, mechanical execution. Plan mode on when real design decisions remain open; off when the approach is already fully specified.
 - **Independent validation before trusting model output at scale**, especially anywhere errors could be asymmetric in cost. The blind-validation-sample pattern used for the boundary review (sample a subset, check independently, only then decide how much to trust the rest) is a reusable pattern and should be applied again wherever System A, B, or C output needs to be trusted before being used downstream.
 
-### 10.6 Current status / next step
+### 10.6 System A outcome (Section 5.2, completed)
 
-Section 4 and 5.1 are complete. The project is moving into **Section 5.2, System A (rule-based baseline)** next: pretrained object detector, fixed category-to-grasp lookup table (defined before seeing any evaluation results, not adjusted afterward), converted to rectangle format for scoring against the Section 6 metric. System B and System C have not been started.
+System A is built and evaluated. Test split only, 123 images, 35 objects; train and val were left untouched for System B.
+
+| Measure | Result |
+|---|---|
+| Accuracy, with segmentation fallback (headline) | **57.7%** (71/123) |
+| Accuracy, detector-only (misses count as failures) | 22.8% (28/123) |
+| Accuracy among images the detector fired on | 57.1% (28/49) |
+| Detector coverage | 49/123 (39.8%) |
+
+Things worth carrying into the paper:
+
+- **Two accuracy numbers are reported on purpose.** COCO's 80 classes do not cover most of what Cornell photographs, so a single detector-only figure would mostly measure the detector's vocabulary rather than whether the grasp rule works. Reporting both separates "COCO does not know what a stapler is" from "the grasp rule is wrong."
+- **The detector was worse than the non-learned geometry it was meant to anchor.** Only 46.3% of all 883 images produced any detection, and COCO confidently mislabelled much of what it did find (94 "laptop", 36 "kite", 18 "snowboard", one "refrigerator"). The platform-segmentation fallback, written originally for the object-wise split, located the object more reliably than the pretrained detector did.
+- **Amendment 1, recorded rather than hidden.** The table was frozen and evaluated once at 40.7% before a defect was spotted on a rendered test image: the detector often boxes background clutter, since Cornell shoots objects in an ordinary room. Measured on train, this affected 33.8% of detections. A geometric guard (the box must contain the segmented object's centroid) was added, `OPENING_FRAC` recalibrated on train from 0.537 to 0.696, and the result rose to 57.7%. Both numbers stay on the record, in `data/interim/system_a_results.md` and in commits `afcd99a` and `f3124c6`. No mapping or constant was ever moved in response to an accuracy figure.
+- **The remaining ceiling is orientation.** 13 of the 52 failures clear the IoU bar and fail on angle alone. COCO boxes are axis-aligned, so the orientation rule can only ever emit 0 or 90 degrees and any diagonally-placed object is unreachable. This is the specific weakness System B exists to beat, and it makes a clean point of comparison.
+
+The "defined once, not adjusted afterward" rule was enforced structurally, not on trust: the table was committed in `853de49`, and `git ls-tree` confirms no scoring code was tracked in the repository at that commit.
+
+### 10.7 Current status / next step
+
+Sections 4, 5.1 and 5.2 are complete. Shared infrastructure now exists for the rest of the project: `scripts/cornell_data.py` (loading and the grasp-rectangle convention) and `scripts/grasp_metric.py` (the Section 6 metric), both of which Systems B and C must reuse so the three systems cannot quietly disagree about what is being measured. The metric was validated against an independent rasterised IoU before anything was scored with it.
+
+Next is **Section 5.3, System B (learned grasp predictor)**: custom CNN and fine-tuned ResNet18/34, trained on the 620-image train split with the 140-image val split for model selection, and evaluated on the same untouched 123-image test split. System C has not been started.
