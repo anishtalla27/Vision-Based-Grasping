@@ -34,6 +34,15 @@ wandb/
 data/raw/
 data/interim/
 data/external/
+# Keep the frozen System A evidence bundle in the audit trail.
+!data/interim/
+data/interim/*
+!data/interim/system_a_results.md
+!data/interim/system_a_detections.csv
+!data/interim/system_a_predictions.csv
+!data/interim/system_a_sheets/
+data/interim/system_a_sheets/*
+!data/interim/system_a_sheets/*.png
 *.h5
 *.hdf5
 
