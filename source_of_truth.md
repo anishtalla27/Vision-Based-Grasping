@@ -2,9 +2,9 @@
 
 ## Sub-project of: Adaptive Robotic Grasping Through Vision-Informed Grip Decisions, Multi-Signal Slip Detection, and Real-Time Recovery
 
-Researcher: Pranav Nair (high school senior research, ISEF/RSEF level)
-Status: Summer work phase, no physical hardware available yet (gripper build happens in fall)
-Purpose of this file: this is the current, authoritative plan for the summer sub-project. It replaces the earlier single-model version of this document. Anyone (human or AI) picking up this work should treat this file as the plan to follow, not the earlier draft.
+Researcher: Anish Talla (high school senior research, ISEF/RSEF level)
+Status: Summer work phase, no physical hardware available yet (gripper build happens in fall). Object-wise dataset split is finalized as of this update. See Section 10 for full status and workflow context.
+Purpose of this file: this is the current, authoritative plan for the summer sub-project. It replaces the earlier single-model version of this document. Anyone (human or AI) picking up this work should treat this file as the plan to follow, not the earlier draft. Section 10 is an addendum documenting what actually happened during dataset preparation, since real decisions were made that future work (and the eventual paper) needs to reflect accurately.
 
 ---
 
@@ -147,3 +147,65 @@ Report for each of the three systems:
 - Depierre, Dellandrea, and Chen — the Jacquard Dataset paper, relevant if Jacquard is used as a supplement or alternative dataset
 
 These should be read directly by whoever continues the work, since exact findings and framing need to be verified against the actual papers rather than assumed from this summary.
+
+---
+
+## 10. Addendum — Dataset Preparation Outcome (added after Section 5.1 was completed)
+
+This section documents what actually happened during dataset sourcing and the object-wise split, since the process deviated from a simple download-and-split and produced real methodological decisions that need to carry into the paper. Sections 1-9 above remain the authoritative plan; this section is a record of how Section 4/5.1 was actually executed, and should be treated as settled fact for anyone continuing the work, not re-litigated.
+
+### 10.1 Jacquard Dataset ruled out for this phase
+
+Jacquard was investigated as the primary dataset's fallback per Section 4, but its full distribution is gated behind a EULA requiring a signature and an institutional (non-free) email, submitted to the dataset maintainers for manual admin approval. Because this is summer and the research mentor/supervisor who would normally sign such a request is unavailable, this path is not accessible right now. **Cornell remains primary, as originally planned, but this reason for not using Jacquard should be noted honestly in the methods section if asked why only one dataset was used.**
+
+### 10.2 Cornell Grasping Dataset ships with no object-identity metadata
+
+The Cornell Grasping Dataset does not include an object ID per image, and the object list has no supervisor. This is a real obstacle to the object-wise split required in Section 5.1, since the split's core requirement is that all images of the same physical object end up in the same split, and there was no direct label to group by. Object identity had to be reconstructed from the image sequence itself.
+
+### 10.3 Grouping methodology (summary; full detail lives in `data/interim/` and the git history)
+
+1. **First attempt (rejected):** raw pixel-difference between consecutive frames. Failed because the dataset deliberately varies object rotation within each object's photo set, so same-object rotation and true object changes produced overlapping score distributions. Not usable, discarded.
+
+2. **Working approach:** each frame was segmented using the scene's platform geometry (the object appears as a gap in an otherwise-uniform photography platform), avoiding background-plate misalignment problems. Segmented regions were scored using rotation-invariant descriptors (color histogram, pixel area). This produced a clean, validated separation between same-object and different-object consecutive pairs.
+
+3. **Asymmetric confidence thresholds:** thresholds for automatic accept/reject were set asymmetrically rather than at the empirical midpoint between score distributions. Wrongly merging two different objects into one group is low-risk for a downstream object-wise split (the merged group still lands entirely in one split). Wrongly splitting one true object into two groups is high-risk (the pieces can land in different splits, silently inflating reported accuracy). The automatic "different" threshold was therefore set conservatively, below the lowest score seen for any manually-confirmed same-object pair; the automatic "same" threshold was set more permissively.
+
+4. **Two-layer manual review for the ambiguous band (28.4% of boundaries):**
+   - Full first pass by the assisting model over every ambiguous boundary, with a logged confidence level and reasoning per call
+   - Independent blind validation: the researcher classified a stratified random sample (oversampled toward the model's uncertain calls) with no visibility into the model's calls
+   - Result: 86.7% agreement on the model's confident calls, 40.0% on its uncertain calls. This confirmed the model's stated confidence was actually informative, and revealed a specific reasoning bias (inferring object continuity from a failed segmentation / thin visual sliver) that accounted for most of the disagreement
+   - Full manual review was then done by the researcher on: all uncertain calls, all confident "different" calls (the higher-risk direction), and any call (regardless of confidence) whose reasoning relied on the flagged segfail-inference pattern
+   - Confident "same" calls not flagged by the above were auto-accepted without individual review, since errors in that direction are low-risk by construction
+
+5. **Six boundaries remained genuinely ambiguous after full manual review.** Four with a stated directional lean were resolved toward "same" (consistent with the asymmetric risk argument: a wrong "same" is low-cost, a wrong "different" is not). Two with no lean at all were not forced to a decision; instead, one image on the smaller side of each ambiguous boundary was excluded from the dataset rather than guessed at.
+
+This entire process, including the rejected first approach and the reasoning bias caught during validation, is legitimate material for the paper's methods section. It should be written up honestly, including the dead end, since documenting what was tried and rejected (and why) is normal and expected in a methods section, not something to omit for looking cleaner.
+
+### 10.4 Final split
+
+| Split | Objects | Images |
+|---|---|---|
+| train | 164 | 620 |
+| val | 35 | 140 |
+| test | 35 | 123 |
+| **Total** | **234** | **883** |
+
+- 70/15/15 split by object count, random seed 42 for reproducibility
+- Verified twice that no object appears in more than one split: once during construction, once independently by re-reading the final output file
+- 883 of the original 885 images retained; 2 excluded per the unresolved-ambiguity handling described in 10.3, item 5
+- Source of truth files: `data/interim/review_tracking.csv` (all 251 manually-reviewed boundary decisions) and `data/interim/final_split.csv` (every image with object ID and split assignment)
+
+This split is finalized. Do not rebuild or re-derive it without a clear reason; if a reason arises, treat it as a deviation from this document and flag it explicitly rather than silently redoing the work.
+
+### 10.5 Workflow conventions established during this phase (apply going forward)
+
+These aren't part of the technical spec but are operating rules for how work gets done on this project, established during the split process and expected to continue for Systems A, B, and C:
+
+- **Canary phrase:** every Claude Code message in this project must begin with "Anish," including short/repetitive status updates. If this stops happening, treat it as a signal to check in on context state, though note that in practice this has been more often a sign of instruction drift during long repetitive tool-use loops than actual context loss, worth a direct reminder before assuming a full context clear is needed.
+- **No self-authored ground truth, no silent judgment calls by the assisting model.** This is the throughline of the whole split process and should continue into System A/B/C: any evaluation must trace back to an external, objective source (the dataset's own annotations), and any place where the model is inclined to resolve ambiguity on its own should instead be surfaced to the researcher explicitly, as happened with the six leftover ambiguous boundaries.
+- **Model/effort/plan-mode should be specified per prompt**, not left to default: Opus 4.8 at high effort for judgment-heavy design work (thresholds, evaluation logic, anything touching ground truth), Sonnet 5 at medium/low for well-specified, mechanical execution. Plan mode on when real design decisions remain open; off when the approach is already fully specified.
+- **Independent validation before trusting model output at scale**, especially anywhere errors could be asymmetric in cost. The blind-validation-sample pattern used for the boundary review (sample a subset, check independently, only then decide how much to trust the rest) is a reusable pattern and should be applied again wherever System A, B, or C output needs to be trusted before being used downstream.
+
+### 10.6 Current status / next step
+
+Section 4 and 5.1 are complete. The project is moving into **Section 5.2, System A (rule-based baseline)** next: pretrained object detector, fixed category-to-grasp lookup table (defined before seeing any evaluation results, not adjusted afterward), converted to rectangle format for scoring against the Section 6 metric. System B and System C have not been started.
