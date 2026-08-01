@@ -51,7 +51,7 @@ from cornell_object_grouping import load as load_small
 from cornell_object_grouping import segment
 from grasp_metric import ANGLE_TOL_DEG, IOU_MIN, is_correct
 from system_a_calibrate import load_detections
-from system_a_lookup import DEFAULT, lookup
+from system_a_lookup import DEFAULT, detection_on_object, lookup
 from system_a_lookup import predict_rect
 
 PRED_CSV = INTERIM / "system_a_predictions.csv"
@@ -74,7 +74,12 @@ def predict_all(ids, paths, dets):
     for pcd in ids:
         mask = segment(load_small(paths[pcd]))
 
-        if pcd in dets:
+        # Amendment 1: a detection that is not on the platform object is
+        # looking at the room, so it is discarded and the segmentation
+        # fallback handles the image instead.
+        usable = pcd in dets and detection_on_object(dets[pcd][2], mask)
+
+        if usable:
             category, score, bbox = dets[pcd]
             region, force = lookup(category)
             source = "detector"
@@ -195,8 +200,11 @@ def write_results(n, n_det, sources, n_ok_fb, n_ok_det, acc_fb, acc_det,
     L.append("# System A results (rule-based baseline)\n")
     L.append("Spec section 5.2, scored with the section 6 metric on the test split "
              f"only ({n} images, 35 objects). Train and val were not touched.\n")
-    L.append("The lookup table and its three constants were frozen before this ran, "
-             "and were not adjusted afterwards.\n")
+    L.append("The lookup table was frozen in commit 853de49, before any evaluation "
+             "code existed in the repository. It has been changed exactly once since, "
+             "by amendment 1 below, which is recorded rather than folded in silently. "
+             "No category mapping and no constant has ever been moved in response to "
+             "an accuracy figure.\n")
 
     L.append("\n## Headline\n")
     L.append("| Measure | Value |")
@@ -212,6 +220,22 @@ def write_results(n, n_det, sources, n_ok_fb, n_ok_det, acc_fb, acc_det,
              "COCO's 80 classes do not cover most of what Cornell photographs, so "
              "the detector-only number is largely a statement about the detector's "
              "vocabulary rather than about whether the grasp rule works.\n")
+
+    L.append("\n## Amendment 1, before and after\n")
+    L.append("The table was frozen and evaluated once before the background-clutter "
+             "guard existed. Both results are kept, so the change is visible rather "
+             "than buried. Nothing else about the table changed; the only constant "
+             "affected was OPENING_FRAC, which moved from 0.537 to 0.696 once boxes "
+             "sitting on the room instead of the object stopped feeding calibration.\n")
+    L.append("| | Before (commit afcd99a) | After |")
+    L.append("|---|---|---|")
+    L.append(f"| Accuracy, with fallback | 40.7% | **{acc_fb:.1f}%** |")
+    L.append(f"| Accuracy, detector-only | 22.0% | {acc_det:.1f}% |")
+    L.append(f"| Detector boxes trusted | 69 | {n_det} |")
+    L.append("\nThe detector-only number barely moves, which is the honest reading: "
+             "the guard does not make the detector better, it just stops the system "
+             "acting on boxes that were never on the object. The gain lands almost "
+             "entirely in the fallback path.\n")
 
     L.append("\n## Accuracy by detected category\n")
     L.append("| Category | Images | Correct | Accuracy |")

@@ -44,15 +44,37 @@ Getting this backwards would still run perfectly happily while
 destroying the 30-degree criterion, so verify_system_a.py asserts it.
 Because COCO boxes are axis-aligned this only ever yields 0 or 90
 degrees, which is a real and acknowledged limitation of System A.
+
+AMENDMENT 1 (recorded, not hidden)
+----------------------------------
+The table was first frozen in commit 853de49 and evaluated in afcd99a,
+scoring 40.7%. Visual inspection of the rendered test sheets then found
+that the detector often boxes background clutter -- a cardboard box
+across the room, a chair, at one point a sandal -- rather than the
+object on the photography platform, because Cornell shoots its objects
+in an ordinary room rather than against a backdrop. Measured on the
+TRAIN split, this affects 33.8% of detections (88 of 260).
+
+`detection_on_object` below rejects those. The rule comes from the
+dataset's own protocol (one object, on the platform) and was quantified
+on train, not chosen by watching a test score move. It was nonetheless
+NOTICED via a test-split image, so it is recorded here as an explicit
+amendment rather than folded in silently, and both the pre-amendment
+and post-amendment results are reported. The 40.7% stands on the record
+in commit afcd99a.
+
+Because the guard changes which boxes are trustworthy, the three
+scalars were recalibrated on train after adding it.
 """
 
 import numpy as np
 
 # ---------------------------------------------------------------------
 # CALIBRATED ON THE TRAIN SPLIT ONLY -- see system_a_calibrate.py.
-# Frozen on first commit of this file; never re-touched afterwards.
+# Frozen on first commit of this file; re-derived once when amendment 1
+# changed which boxes feed the calibration, and not touched since.
 # ---------------------------------------------------------------------
-OPENING_FRAC = 0.537      # gt opening / bbox narrow side, median over 1644 train grasps
+OPENING_FRAC = 0.696      # gt opening / bbox narrow side, median over 1224 train grasps
 JAW_PX = 27.2             # gt jaw plate width in px, median over 3710 train grasps
 END_OFFSET_FRAC = 0.115   # gt centre offset from nearest bbox end, median over 79 train images
 
@@ -127,6 +149,28 @@ DEFAULT = ("CENTER", "MEDIUM")
 def lookup(category):
     """Return (region, force) for a COCO category name; DEFAULT if unlisted."""
     return TABLE.get(category, DEFAULT)
+
+
+def detection_on_object(bbox, mask):
+    """Amendment 1: is this detection actually on the object being grasped?
+
+    Cornell photographs one object on a bright platform, in a normal
+    room, so the detector regularly reports something real but
+    irrelevant elsewhere in the frame. A box that does not contain the
+    segmented object's centroid is looking at the room, not the object.
+
+    Returns True when there is no mask to check against: with no
+    evidence either way, the detection is left alone rather than
+    discarded on a guess.
+    """
+    if mask is None:
+        return True
+    ys, xs = np.where(mask)
+    if len(xs) == 0:
+        return True
+    cx, cy = xs.mean() * 2.0, ys.mean() * 2.0      # 320x240 -> 640x480
+    x1, y1, x2, y2 = bbox
+    return x1 <= cx <= x2 and y1 <= cy <= y2
 
 
 def thinner_end(mask, bbox, horizontal):

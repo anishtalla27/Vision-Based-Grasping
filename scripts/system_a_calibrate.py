@@ -42,8 +42,10 @@ import csv
 
 import numpy as np
 
-from cornell_data import INTERIM, load_rects, load_split
-from system_a_lookup import lookup
+from cornell_data import INTERIM, find_images, load_rects, load_split
+from cornell_object_grouping import load as load_small
+from cornell_object_grouping import segment
+from system_a_lookup import detection_on_object, lookup
 
 DETECTIONS = INTERIM / "system_a_detections.csv"
 
@@ -70,10 +72,11 @@ def main():
           f"{len(forbidden)} val/test images are off limits.")
 
     dets = load_detections()
+    paths = find_images()
     opened = set()
 
     openings, jaws, offsets = [], [], []
-    n_used = 0
+    n_used = n_clutter = 0
 
     for pcd in sorted(train):
         rects = load_rects(pcd)
@@ -85,6 +88,12 @@ def main():
         jaws.extend(r[4] for r in rects)
 
         if pcd not in dets:
+            continue
+        # Amendment 1: a box sitting on background clutter would poison
+        # OPENING_FRAC, since the ratio would be measured against the
+        # size of some unrelated object across the room.
+        if not detection_on_object(dets[pcd][2], segment(load_small(paths[pcd]))):
+            n_clutter += 1
             continue
         category, _, (x1, y1, x2, y2) = dets[pcd]
         bw, bh = x2 - x1, y2 - y1
@@ -114,7 +123,8 @@ def main():
                          f"{sorted(leaked)[:10]}")
     print(f"Split hygiene OK: opened {len(opened)} images, all train, zero val/test.\n")
 
-    print(f"  train images with a detection : {n_used}/{len(train)}")
+    print(f"  detections rejected as clutter : {n_clutter} (amendment 1)")
+    print(f"  train images with a usable box : {n_used}/{len(train)}")
     print(f"  grasp rectangles used          : {len(jaws)}")
     print(f"  END/UPPER images for offset    : {len(offsets)}")
 
