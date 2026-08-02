@@ -1,0 +1,124 @@
+pcd_id,object_id,object_label,n_gt_rects,stratum,a_correct,a_bucket,b_correct,b_bucket,c_repeats_correct,c_buckets
+0129,6,green pen,3,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0130,6,green pen,4,diagonal,1,correct,1,correct,0,both|both|both|both|both
+0131,6,green pen,3,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0132,6,green pen,3,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0133,7,sunglasses,4,axis-aligned,0,iou_only,1,correct,0,both|both|both|both|both
+0134,7,sunglasses,8,axis-aligned,1,correct,0,both,0,both|both|both|both|both
+0135,7,sunglasses,4,axis-aligned,0,iou_only,1,correct,1,iou_only|both|iou_only|correct|iou_only
+0136,7,sunglasses,2,diagonal,0,iou_only,1,correct,0,both|iou_only|both|both|both
+0137,8,rectangular box,4,axis-aligned,1,correct,1,correct,0,iou_only|iou_only|iou_only|iou_only|both
+0138,8,rectangular box,5,axis-aligned,1,correct,1,correct,1,iou_only|iou_only|iou_only|correct|iou_only
+0139,8,rectangular box,4,axis-aligned,0,iou_only,0,iou_only,0,both|both|both|both|both
+0140,8,rectangular box,4,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0176,22,toothbrush,5,axis-aligned,1,correct,0,iou_only,0,both|both|both|angle_only|both
+0177,23,toothbrush,6,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0178,23,toothbrush,5,axis-aligned,0,both,1,correct,0,iou_only|both|both|both|both
+0179,23,toothbrush,6,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0180,23,toothbrush,5,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0181,23,toothbrush,5,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0182,23,toothbrush,4,axis-aligned,0,angle_only,1,correct,0,both|iou_only|both|iou_only|both
+0183,23,toothbrush,4,diagonal,0,both,1,correct,0,both|both|both|both|both
+0184,23,toothbrush,4,axis-aligned,0,both,1,correct,0,iou_only|iou_only|iou_only|iou_only|both
+0193,26,object 26 (label uncertain),3,axis-aligned,1,correct,0,both,0,both|both|both|both|both
+0194,26,object 26 (label uncertain),3,axis-aligned,0,iou_only,0,both,0,both|both|both|angle_only|both
+0195,26,object 26 (label uncertain),3,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0196,26,object 26 (label uncertain),3,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0199,28,digital camera,4,axis-aligned,0,angle_only,1,correct,0,both|both|both|both|both
+0213,35,toothbrush,5,axis-aligned,1,correct,1,correct,0,both|both|angle_only|both|both
+0214,35,toothbrush,5,axis-aligned,1,correct,0,iou_only,0,both|both|both|both|both
+0215,35,toothbrush,7,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0216,35,toothbrush,6,axis-aligned,0,both,0,iou_only,0,iou_only|both|both|both|both
+0284,50,object 50 (label uncertain),4,axis-aligned,0,no_prediction,1,correct,0,both|both|both|both|both
+0285,50,object 50 (label uncertain),5,diagonal,0,angle_only,1,correct,0,angle_only|both|both|both|angle_only
+0286,50,object 50 (label uncertain),4,axis-aligned,0,no_prediction,0,iou_only,0,iou_only|iou_only|both|iou_only|iou_only
+0287,50,object 50 (label uncertain),4,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0299,55,rectangular device,3,diagonal,0,angle_only,1,correct,0,both|both|both|both|both
+0300,56,object 56 (label uncertain),3,axis-aligned,1,correct,1,correct,1,correct|both|both|both|iou_only
+0301,56,object 56 (label uncertain),3,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0302,56,object 56 (label uncertain),3,axis-aligned,1,correct,1,correct,0,both|both|angle_only|both|both
+0303,56,object 56 (label uncertain),4,axis-aligned,1,correct,1,correct,1,both|correct|both|both|both
+0304,56,object 56 (label uncertain),3,diagonal,1,correct,1,correct,1,correct|iou_only|both|both|both
+0305,56,object 56 (label uncertain),3,diagonal,0,angle_only,1,correct,0,both|angle_only|both|iou_only|angle_only
+0306,56,object 56 (label uncertain),3,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0307,56,object 56 (label uncertain),4,axis-aligned,1,correct,1,correct,0,iou_only|both|iou_only|both|iou_only
+0308,56,object 56 (label uncertain),4,axis-aligned,0,no_prediction,1,correct,0,angle_only|angle_only|both|both|both
+0309,57,metal bolt,4,axis-aligned,1,correct,1,correct,0,iou_only|iou_only|both|iou_only|iou_only
+0310,57,metal bolt,4,axis-aligned,0,iou_only,0,iou_only,0,both|both|both|both|both
+0311,57,metal bolt,4,axis-aligned,1,correct,0,iou_only,1,correct|iou_only|iou_only|both|both
+0316,59,plastic cup,10,axis-aligned,0,angle_only,0,angle_only,0,both|both|both|iou_only|both
+0324,62,black bowl,13,axis-aligned,0,iou_only,0,both,0,angle_only|both|iou_only|angle_only|both
+0347,70,mug,11,axis-aligned,0,both,0,both,0,both|no_prediction|angle_only|both|both
+0348,70,mug,10,axis-aligned,0,both,0,angle_only,0,both|iou_only|angle_only|iou_only|angle_only
+0349,70,mug,7,axis-aligned,1,correct,1,correct,2,iou_only|correct|both|correct|both
+0350,70,mug,4,axis-aligned,0,iou_only,0,both,1,both|both|iou_only|correct|iou_only
+0351,71,calculator,4,axis-aligned,1,correct,1,correct,4,correct|correct|correct|both|correct
+0352,71,calculator,4,diagonal,0,angle_only,1,correct,0,both|angle_only|angle_only|angle_only|both
+0517,107,computer mouse,4,axis-aligned,1,correct,1,correct,0,both|angle_only|both|both|both
+0518,107,computer mouse,3,axis-aligned,1,correct,1,correct,0,iou_only|iou_only|iou_only|iou_only|iou_only
+0519,107,computer mouse,3,diagonal,0,angle_only,1,correct,0,both|both|both|both|both
+0520,107,computer mouse,3,axis-aligned,1,correct,1,correct,3,correct|both|correct|correct|both
+0521,107,computer mouse,6,axis-aligned,0,both,1,correct,1,both|both|angle_only|both|correct
+0522,108,wristwatch,5,axis-aligned,0,both,1,correct,1,correct|iou_only|iou_only|iou_only|both
+0523,108,wristwatch,3,axis-aligned,1,correct,1,correct,0,both|angle_only|angle_only|both|angle_only
+0546,114,scissors,8,axis-aligned,1,correct,1,correct,0,angle_only|angle_only|both|angle_only|both
+0547,114,scissors,11,axis-aligned,0,iou_only,1,correct,0,iou_only|both|iou_only|angle_only|iou_only
+0548,114,scissors,9,axis-aligned,1,correct,0,iou_only,0,angle_only|both|angle_only|both|both
+0549,114,scissors,14,diagonal,1,correct,0,iou_only,2,both|correct|correct|both|both
+0618,129,blue sunglasses,12,axis-aligned,0,angle_only,0,iou_only,1,angle_only|both|both|correct|both
+0619,129,blue sunglasses,7,diagonal,1,correct,1,correct,0,both|angle_only|angle_only|both|both
+0633,139,flip-flop sandal,10,axis-aligned,1,correct,1,correct,1,angle_only|both|angle_only|angle_only|correct
+0634,139,flip-flop sandal,13,axis-aligned,1,correct,1,correct,0,both|both|angle_only|angle_only|angle_only
+0635,139,flip-flop sandal,4,diagonal,1,correct,1,correct,3,correct|correct|correct|iou_only|iou_only
+0636,139,flip-flop sandal,6,axis-aligned,0,iou_only,0,iou_only,1,both|correct|angle_only|angle_only|both
+0637,139,flip-flop sandal,6,axis-aligned,0,iou_only,1,correct,0,both|both|both|both|both
+0638,139,flip-flop sandal,4,diagonal,0,iou_only,0,iou_only,1,iou_only|iou_only|correct|iou_only|both
+0639,139,flip-flop sandal,11,axis-aligned,1,correct,1,correct,0,angle_only|both|angle_only|both|both
+0640,139,flip-flop sandal,9,axis-aligned,0,angle_only,1,correct,0,both|angle_only|both|both|both
+0651,143,plastic dispenser,5,axis-aligned,0,iou_only,1,correct,0,both|both|angle_only|both|both
+0652,143,plastic dispenser,6,axis-aligned,1,correct,1,correct,2,iou_only|iou_only|correct|iou_only|correct
+0675,150,purple cup,10,axis-aligned,0,both,1,correct,1,both|iou_only|iou_only|correct|iou_only
+0676,150,purple cup,7,axis-aligned,1,correct,0,angle_only,0,both|angle_only|both|both|both
+0677,150,purple cup,5,axis-aligned,1,correct,1,correct,1,correct|both|angle_only|both|both
+0678,151,object 151 (label uncertain),6,axis-aligned,0,no_prediction,1,correct,2,both|correct|correct|both|both
+0679,151,object 151 (label uncertain),6,axis-aligned,0,iou_only,1,correct,1,correct|both|both|both|both
+0680,151,object 151 (label uncertain),4,axis-aligned,0,iou_only,1,correct,0,both|both|angle_only|both|both
+0684,154,red spool,6,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0723,163,remote control,6,axis-aligned,1,correct,1,correct,4,correct|correct|correct|correct|iou_only
+0724,163,remote control,6,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0725,163,remote control,9,diagonal,1,correct,1,correct,0,both|both|both|angle_only|both
+0726,163,remote control,5,diagonal,1,correct,1,correct,1,both|angle_only|correct|angle_only|angle_only
+0731,166,folded umbrella,9,axis-aligned,1,correct,0,iou_only,0,angle_only|both|angle_only|both|both
+0732,166,folded umbrella,8,diagonal,0,angle_only,1,correct,0,both|angle_only|both|angle_only|angle_only
+0733,166,folded umbrella,8,axis-aligned,1,correct,1,correct,3,correct|correct|iou_only|both|correct
+0734,166,folded umbrella,9,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0759,173,potato masher,8,axis-aligned,1,correct,1,correct,0,iou_only|iou_only|iou_only|iou_only|both
+0760,173,potato masher,7,axis-aligned,1,correct,0,iou_only,1,angle_only|correct|angle_only|both|both
+0761,173,potato masher,9,diagonal,0,iou_only,1,correct,3,angle_only|correct|iou_only|correct|correct
+0762,173,potato masher,10,axis-aligned,0,iou_only,1,correct,1,correct|both|both|angle_only|both
+0783,179,cleaning brush,4,axis-aligned,0,both,0,iou_only,0,angle_only|angle_only|angle_only|angle_only|both
+0784,179,cleaning brush,4,diagonal,0,both,1,correct,1,angle_only|iou_only|correct|both|iou_only
+0785,179,cleaning brush,4,axis-aligned,0,both,1,correct,1,angle_only|correct|both|angle_only|iou_only
+0786,179,cleaning brush,4,axis-aligned,1,correct,1,correct,0,angle_only|both|angle_only|both|both
+0797,183,object 183 (label uncertain),5,axis-aligned,0,no_prediction,1,correct,0,angle_only|angle_only|both|both|both
+0798,183,object 183 (label uncertain),5,axis-aligned,0,iou_only,1,correct,0,iou_only|iou_only|iou_only|iou_only|iou_only
+0799,183,object 183 (label uncertain),5,diagonal,0,no_prediction,1,correct,0,both|both|angle_only|both|angle_only
+0800,183,object 183 (label uncertain),4,axis-aligned,0,no_prediction,1,correct,4,correct|correct|correct|correct|iou_only
+0801,183,object 183 (label uncertain),14,axis-aligned,0,both,1,correct,2,angle_only|correct|both|angle_only|correct
+0816,188,red grape,4,diagonal,1,correct,1,correct,2,both|both|both|correct|correct
+0817,188,red grape,5,axis-aligned,1,correct,1,correct,0,both|both|angle_only|both|both
+0818,188,red grape,6,axis-aligned,1,correct,1,correct,0,both|both|both|angle_only|both
+0819,188,red grape,5,axis-aligned,1,correct,1,correct,1,both|angle_only|correct|both|angle_only
+0820,189,green apple,5,axis-aligned,1,correct,1,correct,0,both|both|both|both|both
+0821,189,green apple,7,axis-aligned,1,correct,1,correct,1,both|both|both|both|correct
+0822,189,green apple,6,axis-aligned,1,correct,1,correct,1,both|angle_only|correct|both|both
+0823,189,green apple,5,axis-aligned,1,correct,1,correct,3,both|correct|correct|correct|both
+0824,189,green apple,6,axis-aligned,1,correct,0,angle_only,5,correct|correct|correct|correct|correct
+0825,189,green apple,6,axis-aligned,1,correct,1,correct,2,correct|correct|both|angle_only|both
+0826,189,green apple,5,axis-aligned,1,correct,1,correct,1,both|angle_only|correct|angle_only|both
+0827,189,green apple,5,axis-aligned,1,correct,1,correct,3,correct|correct|angle_only|angle_only|correct
+1000,221,object 221 (label uncertain),8,axis-aligned,0,no_prediction,1,correct,0,iou_only|both|both|both|both
+1027,230,object 230 (label uncertain),6,axis-aligned,1,correct,1,correct,0,iou_only|iou_only|both|both|both
+1028,230,object 230 (label uncertain),3,axis-aligned,0,angle_only,1,correct,0,both|both|iou_only|both|both
+1029,231,object 231 (label uncertain),7,axis-aligned,1,correct,1,correct,0,both|both|both|both|iou_only
+1030,231,object 231 (label uncertain),3,axis-aligned,0,angle_only,1,correct,2,iou_only|both|correct|iou_only|correct

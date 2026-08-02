@@ -58,6 +58,13 @@ data/interim/system_b_sheets/*
 !data/interim/system_c_sheets/
 data/interim/system_c_sheets/*
 !data/interim/system_c_sheets/*.png
+# Keep the Section 6 cross-system comparison bundle, same reasoning.
+!data/interim/comparison_results.md
+!data/interim/comparison_per_image.csv
+!data/interim/comparison_by_object.csv
+!data/interim/comparison_sheets/
+data/interim/comparison_sheets/*
+!data/interim/comparison_sheets/*.png
 *.h5
 *.hdf5
 
