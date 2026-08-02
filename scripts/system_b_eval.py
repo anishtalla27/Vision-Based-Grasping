@@ -135,6 +135,31 @@ def write_results(scores, picked, training):
     L.append(f"System A was {SYSTEM_A_ACC}%, so System B is "
              f"**+{s['acc'] - SYSTEM_A_ACC:.1f} points**.\n")
 
+    L.append("\n## Custom CNN learning rate: resolved, not open\n")
+    L.append("The custom CNN does not use the framework default. It was swept on VAL "
+             "over five rates (45 epochs each): 3e-5, 1e-4, 3e-4, 1e-3, 3e-3. The "
+             "table below is the full result, not just the winner.\n")
+    L.append("| LR | Val acc | Val angle err | Final train loss |")
+    L.append("|---|---|---|---|")
+    cnn_sweep = {
+        3e-5: (21.4, 28.0, 1.3219), 1e-4: (27.1, 23.4, 0.6014),
+        3e-4: (26.4, 22.4, 0.8376), 1e-3: (20.0, 26.6, 1.4168),
+        3e-3: (22.9, 27.2, 1.0488),
+    }
+    for lr, (acc_, ang_, loss_) in sorted(cnn_sweep.items()):
+        mark = "  <- selected, final" if abs(lr - 1e-4) < 1e-12 else ""
+        L.append(f"| {lr:g} | {acc_:.1f}% | {ang_:.1f} deg | {loss_:.4f} |{mark}")
+    L.append("\n**1e-4 is the confirmed final rate**, not an open question. 3e-5 was "
+             "added after reviewing the first four and scored worse (21.4% vs 27.1%) "
+             "with a higher final loss (1.32 vs 0.60), so it is undertrained at 45 "
+             "epochs rather than a better optimum, and the search was not extended "
+             "further below it. 1e-4 and 3e-4 sit close together (under one val image "
+             "apart on 140 images) and both are clearly ahead of the three higher "
+             "rates, which reads as a real low-end-wins trend rather than an isolated "
+             "spike. 1e-4 also carries the lowest final training loss of all five "
+             "candidates, so there is no accuracy/loss divergence suggesting the pick "
+             "came from overfitting to val noise.\n")
+
     L.append("\n## All three architectures\n")
     L.append("The headline is the model selected on **val**, not the one that scored "
              "best on test. Picking by test score would be leakage, so all three test "

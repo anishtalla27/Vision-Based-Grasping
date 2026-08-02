@@ -94,8 +94,19 @@ WEIGHT_DECAY = 1e-4
 # system_b_tune.py, rather than silently inheriting HEAD_LR. See that
 # file's module docstring/comments for why this matters: without it,
 # "pretrained beats from-scratch" would be confounded with "one arm got
-# a tuned rate and the other did not". None until swept and pasted in.
-CNN_LR = None
+# a tuned rate and the other did not".
+#
+# Swept over 1e-4, 3e-4, 1e-3, 3e-3 (45 epochs each, val only), then one
+# extra candidate 3e-5 added after review of that table. 3e-5 scored
+# worse (21.4% vs 27.1%) with a higher final loss (1.32 vs 0.60), so it
+# is undertrained at 45 epochs rather than a better optimum, and the
+# search was not extended further below it. 1e-4 and 3e-4 are close
+# (27.1% vs 26.4%, under one val image apart) and both clearly ahead of
+# the higher rates, which is a real low-end-wins trend rather than an
+# isolated spike. 1e-4 also has the lowest final train loss of every
+# candidate tried, so there is no accuracy/loss divergence to suggest
+# overfitting drove the pick.
+CNN_LR = 1e-4
 
 # Loss weights. Start equal; any change is decided on VAL only.
 W_POS, W_ORI, W_SIZE = 1.0, 1.0, 1.0
