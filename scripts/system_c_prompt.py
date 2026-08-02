@@ -134,6 +134,41 @@ Rules:
 PROMPT = PROMPT_V1
 PROMPT_VERSION = "v1"
 
+# =====================================================================
+# FREEZE CONFIRMATION -- v1 reviewed against the train-30 dev batch and
+# kept UNCHANGED. Test has not been called at the time of this commit.
+# =====================================================================
+# 60 calls (30 train images x 2 repeats): 60/60 parsed (100%), 0
+# api_fail/parse_fail/schema_fail/range_fail. The opening-width ratio
+# flagged from the 3-image smoke test (2.12x/1.46x/1.65x) did not hold
+# up as a uniform bias at n=30 (mean 1.42x, median 1.15x, std 0.82,
+# range 0.37x-3.99x, direction and magnitude both object-dependent) --
+# reported as noise, not corrected for, per the plan's rule that the
+# prompt is tuned on parse rate and geometry, never on accuracy.
+#
+# Train accuracy was low (16.7% of parsed calls). Before accepting that
+# as a capability finding rather than a bug, three things were checked
+# and none pointed at this prompt or its parser:
+#   1. Scoring convention matches System A and B exactly -- is_correct()
+#      is called with the full load_rects() list, best-match, same as
+#      system_a_run.py and system_b_eval.py.
+#   2. Four "both fail" (angle AND overlap) sheets were inspected by
+#      eye. Three of four showed the predicted rectangle sitting in
+#      empty space, not touching the object, despite a plausible,
+#      specific "reasoning" string ("across the nose bridge", "near the
+#      handle's midpoint") -- a text-to-coordinate binding failure, not
+#      a bad grasp choice. The fourth was a genuine near-miss (position
+#      right, rotation 84 degrees off on a many-valid-angle object).
+#   3. Self-agreement across the 2 dev repeats was low (mean 20%, 24/30
+#      images where the repeats disagreed with EACH OTHER) -- consistent
+#      with genuine inconsistency, not a stable wrong prior repeated by
+#      a broken parser.
+#
+# Conclusion: the low accuracy is a real capability result -- this
+# prompting approach (asking a VLM for grasp coordinates via free text)
+# does not reliably bind its own stated reasoning to the coordinates it
+# emits. No prompt change was made. v1 is final.
+
 # Contamination probe (spec-adjacent, reported as an indicator not a test).
 # Deliberately does not mention grasping, robotics, or Cornell, so a
 # recognition is the model volunteering it rather than being led there.
