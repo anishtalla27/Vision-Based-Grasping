@@ -12,3 +12,6 @@ pillow
 # System A onward: COCO-pretrained detector, and System B training later.
 torch
 torchvision
+
+# System C: the VLM baseline talks to OpenRouter, which speaks the OpenAI API.
+openai
