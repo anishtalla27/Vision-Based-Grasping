@@ -252,8 +252,37 @@ Things worth carrying into the paper:
 - **The custom CNN failed to learn the task**, even after its own learning-rate sweep. Five rates were tried on val (3e-5 through 3e-3); the winner, 1e-4, also had the lowest final training loss of all five, so the failure is not an artifact of an untuned rate. Training loss plateaued around 0.5-0.6 rather than continuing to fall the way the ResNets' losses did, which points to the from-scratch architecture lacking the capacity or the inductive bias (no ImageNet features) to solve grasp orientation from 620 images, not to a tuning oversight.
 - **Two real bugs were caught by review before being reported as results**, both recorded in commit history: an early-stopping rule that let a lucky pre-training epoch become the "best" checkpoint (fixed with a warmup-ineligibility rule and an epoch-40 floor, justified from measured loss-plateau and val-volatility curves rather than from where any model's best epoch happened to land), and a size-loss term so underweighted relative to position that predicted rectangles collapsed toward small near-squares (diagnosed via an 8-image overfit sanity check, then correctly resolved on val rather than on that 8-image result, which pointed the wrong way).
 
-### 10.8 Current status / next step
+### 10.9 System C outcome (Section 5.4, completed)
 
-Sections 4, 5.1, 5.2 and 5.3 are complete. Shared infrastructure (`scripts/cornell_data.py`, `scripts/grasp_metric.py`) has now been reused unchanged across two independently-built systems.
+GPT-4o via OpenRouter, prompted directly with each image, no task-specific training. Prompt frozen (`a705b90`, confirmed unchanged after train-30 dev review at `24839da`) before test was opened. 5 independent single-turn repeats per image, no shared conversation, default temperature, evaluated once on the same sealed 123-image test split Systems A and B used.
 
-Next is **Section 5.4, System C (vision-language model baseline)**: prompt a pretrained multimodal model directly with the image, parse its output into the same rectangle format, and test consistency across repeated prompts on the same image. Section 6's full three-way comparison (with category and condition breakdowns) follows once System C is done.
+| Measure | Result |
+|---|---|
+| Mean per-repeat accuracy (headline) | **12.4%** (min 9.8%, max 14.6%, std 1.9, over 5 repeats) |
+| Best-of-5 (not the headline) | 35.0% |
+| Majority-consensus (not the headline) | 12.2% |
+| Parse rate | 614/615 calls (99.8%) |
+
+**Three-way comparison, same sealed 123-image test set:**
+
+| | System A | System B (ResNet18) | System C (GPT-4o) |
+|---|---|---|---|
+| Test accuracy | 57.7% | **79.7%** | 12.4% |
+
+System C trails System A by 45.3 points and System B by 67.3 points. A rule-based lookup table beating a zero-shot frontier VLM by 45 points is treated as a genuine, explainable finding, not a discardable result — the failure taxonomy and self-agreement data below explain why rather than leaving the number to speak for itself.
+
+Things worth carrying into the paper:
+
+- **The model was never asked for an angle.** It was asked where the two gripper fingertips touch, and theta was derived from those points by `cornell_data.corners_to_rect` — the same frozen function that produced every ground-truth angle in the project. This closes off an entire class of silent 90-degree convention errors (degrees/radians, clockwise/counter-clockwise, y-up/y-down) that would otherwise be indistinguishable from the model simply being bad at grasping.
+- **The dominant failure mode is compound, not single-axis**: 365 of 614 parsed calls (59.4%) fail on both angle and overlap at once, against 85 angle-only and 88 IoU-only. Visual inspection of sampled compound failures (train-30 dev batch, confirmed at test scale) found a specific, repeatable pattern: several replies carried plausible, specific `reasoning` text describing a real part of the object, while the `finger_a`/`finger_b` coordinates in the same JSON reply did not land on the object at all. This is stated precisely as **a text-to-coordinate binding limitation of prompting a VLM for grasp geometry via free-text JSON coordinates**, not as a general claim about GPT-4o's or VLMs' spatial grounding capability — a different elicitation method (point-and-click grounding, set-of-marks prompting) might bind reasoning to coordinates more reliably, and that comparison is out of scope here.
+- **Self-agreement across repeats is a usable confidence signal, but it does not make the deployed system competitive.** Mean self-agreement 22.0%; 65.9% of images land at 5/5 or 0/5 (stably wrong or stably right, not toggling). The abstention curve shows a real, monotonic trend over trustworthy sample sizes: at a self-agreement threshold of 0.4, accuracy on the 21.1% of images still acted on rises to 57.7%. That is a genuine, non-obvious finding about when to trust a VLM grasp prediction — but the comparison against Systems A and B is the one-call-per-image deployment (12.4%), and the 57.7%-on-21%-coverage figure answers a different question (which of several repeated calls to trust) rather than changing that comparison.
+- **Contamination risk was reasoned through, not just disclosed.** Cornell is a public, widely-mirrored dataset a frontier model could plausibly have seen; a 10-image probe (asked to name the source dataset without being told the task was grasping) came back 0/10 recognised, reported as a mild, non-dispositive indicator rather than a clearance. The risk can only inflate System C's number, never deflate it, so the "System C trails" conclusion is robust to it; a "System C does surprisingly well" claim would not have been, and no such claim is made.
+- **Verification discipline caught a real bug in the contamination-probe scoring before the number was reported.** An automated recognition check initially flagged 1/10 due to a smart-quote mismatch (checking for a straight apostrophe in `don't`, the model's reply used a curly one) silently breaking the negation logic. Caught by comparing the automated count against an independent manual read of the same 10 replies before trusting either, fixed, and re-scored against the frozen raw log (a re-parse of sealed data, not a re-call — consistent with this project's rule that re-parsing is permitted and re-querying the model is not). This is the third time in this project a self-authored cross-check caught the project's own bug before a number was reported rather than after: System B's early-stopping floor initially anchoring on an untrained epoch-0 fluke, an earlier correction during split generation, and now this. Named explicitly in `data/interim/system_c_results.md` as a methodological pattern worth keeping.
+
+Full detail, including the per-repeat breakdown, parse-outcome table, failure taxonomy, self-agreement histogram, and abstention curve at every threshold: `data/interim/system_c_results.md`. Per-call predictions in `system_c_predictions.csv`, per-image consistency data in `system_c_consistency.csv`, 12 comparison sheets in `system_c_sheets/`.
+
+### 10.10 Current status / next step
+
+Sections 4, 5.1, 5.2, 5.3 and 5.4 are complete. All three systems are sealed: System A 57.7%, System B (ResNet18) 79.7%, System C (GPT-4o) 12.4%, all on the identical 123-image test split. Shared infrastructure (`scripts/cornell_data.py`, `scripts/grasp_metric.py`) has now been reused unchanged across all three independently-built systems.
+
+Next is **Section 6**: the full three-way comparison, with category and condition breakdowns.
