@@ -100,9 +100,18 @@ def score(rows):
     n = len(rows)
     ang_err = float(np.mean([min(angle_diff(p[2], g[2]) for g in gs)
                              for p, gs in rows]))
+    # IoU averaged only over predictions that PASSED (matched a ground
+    # truth under both criteria), as distinct from mean_angle_err above
+    # which averages over every image regardless of outcome. Reported
+    # separately because a failure's best_iou can be near zero and would
+    # otherwise drag this number down without saying anything about
+    # match quality.
+    matched_ious = [r[3] for r in records if r[2]]
+    mean_iou_matched = float(np.mean(matched_ious)) if matched_ious else float("nan")
     return {"n": n, "correct": n_ok, "acc": n_ok / n * 100,
             "angle_only": angle_only, "iou_only": iou_only,
-            "mean_angle_err": ang_err, "records": records}
+            "mean_angle_err": ang_err, "mean_iou_matched": mean_iou_matched,
+            "records": records}
 
 
 def draw_sheets(ds, records, name, k=12):
@@ -122,7 +131,7 @@ def draw_sheets(ds, records, name, k=12):
         im.save(SHEETS / f"{name}_{ds.ids[i]:04d}.png")
 
 
-def write_results(scores, picked, training):
+def write_results(scores, picked, training, ids):
     L = []
     L.append("# System B results (learned grasp predictor)\n")
     L.append("Spec section 5.3, scored with the same section 6 metric and the same "
@@ -164,14 +173,21 @@ def write_results(scores, picked, training):
     L.append("The headline is the model selected on **val**, not the one that scored "
              "best on test. Picking by test score would be leakage, so all three test "
              "numbers are shown and the selection rule is stated rather than implied.\n")
-    L.append("| Model | Params | Best val acc | Test acc | Selected |")
-    L.append("|---|---|---|---|---|")
+    L.append("| Model | Params | Best val acc | Test acc | Mean angle err | "
+             "Mean IoU (matched) | Selected |")
+    L.append("|---|---|---|---|---|---|---|")
     for m in MODELS:
         tr = next((t for t in training if t["model"] == m), None)
         v = f"{tr['best_val_acc']*100:.1f}%" if tr else "n/a"
         mark = "**yes**" if m == picked else ""
         p = f"{tr['params']/1e6:.1f}M" if tr else "n/a"
-        L.append(f"| {m} | {p} | {v} | {scores[m]['acc']:.1f}% | {mark} |")
+        sm = scores[m]
+        L.append(f"| {m} | {p} | {v} | {sm['acc']:.1f}% | {sm['mean_angle_err']:.1f} deg "
+                 f"| {sm['mean_iou_matched']:.3f} | {mark} |")
+    L.append("\n`Mean IoU (matched)` is averaged only over predictions that PASSED "
+             "(matched a ground truth on both criteria), so it describes match "
+             "quality and is not dragged down by failures the way an all-images "
+             "average would be.\n")
 
     L.append("\n## Against System A, on the axis that limited it\n")
     L.append("System A could only ever emit 0 or 90 degrees, because COCO boxes are "
@@ -188,16 +204,21 @@ def write_results(scores, picked, training):
     L.append(f"| Failures on overlap alone | not measured | "
              f"{s['iou_only']}/{s['n']-s['correct']} |")
 
-    L.append("\n## Failure cases\n")
-    L.append("Closest miss first. `best IoU` and `angle err` are against whichever "
-             "ground-truth grasp the prediction overlapped most.\n")
-    L.append("| Image | Best IoU | Angle err | Missed on |")
-    L.append("|---|---|---|---|")
-    misses = [(i, r) for i, r in enumerate(s["records"]) if not r[2]]
-    for i, (pred, gts, ok, iou, ang) in sorted(misses, key=lambda x: -x[1][3])[:8]:
-        why = ("angle only" if iou > IOU_MIN else
-               "overlap only" if ang <= ANGLE_TOL_DEG else "both")
-        L.append(f"| index {i} | {iou:.2f} | {ang:.0f} deg | {why} |")
+    L.append("\n## Failure cases, per model\n")
+    L.append("Closest miss first, so these are the informative near-misses rather "
+             "than the hopeless ones. `best IoU` and `angle err` are against "
+             "whichever ground-truth grasp the prediction overlapped most.\n")
+    for m in MODELS:
+        sm = scores[m]
+        n_fail = sm["n"] - sm["correct"]
+        L.append(f"\n**{m}** ({n_fail} failures out of {sm['n']}):\n")
+        L.append("| Image | Best IoU | Angle err | Missed on |")
+        L.append("|---|---|---|---|")
+        misses = [(ids[i], r) for i, r in enumerate(sm["records"]) if not r[2]]
+        for pcd, (pred, gts, ok, iou, ang) in sorted(misses, key=lambda x: -x[1][3])[:8]:
+            why = ("angle only" if iou > IOU_MIN else
+                   "overlap only" if ang <= ANGLE_TOL_DEG else "both")
+            L.append(f"| pcd{pcd:04d} | {iou:.2f} | {ang:.0f} deg | {why} |")
 
     L.append("\n## Method notes for the write-up\n")
     L.append("- Orientation is regressed as (cos 2t, sin 2t) on the unit circle. "
@@ -252,7 +273,9 @@ def main():
         scores[name] = s
         mark = "  <- val-selected, headline" if name == picked else ""
         print(f"  {name:<10} test {s['acc']:5.1f}%  ({s['correct']}/{s['n']})  "
-              f"mean angle err {s['mean_angle_err']:4.1f}deg{mark}")
+              f"mean angle err {s['mean_angle_err']:4.1f}deg  "
+              f"mean IoU (matched) {s['mean_iou_matched']:.3f}{mark}")
+        draw_sheets(ds, s["records"], name)
 
     s = scores[picked]
     with open(PRED_CSV, "w", newline="") as f:
@@ -263,11 +286,10 @@ def main():
             w.writerow([f"{pcd:04d}"] + [f"{v:.2f}" for v in pred]
                        + [f"{iou:.3f}", f"{ang:.1f}", int(ok)])
 
-    write_results(scores, picked, training)
-    draw_sheets(ds, s["records"], picked)
+    write_results(scores, picked, training, ds.ids)
 
     print(f"\nHeadline: {picked} at {s['acc']:.1f}% vs System A at {SYSTEM_A_ACC}% "
-          f"({s['acc'] - SYSTEM_A_ACC:+.1f} points)")
+          f"on the same sealed test set ({s['acc'] - SYSTEM_A_ACC:+.1f} points)")
     print(f"Wrote {PRED_CSV}\nWrote {RESULTS_MD}\nWrote sheets to {SHEETS}")
 
 
