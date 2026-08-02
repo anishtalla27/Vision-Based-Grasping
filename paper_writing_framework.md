@@ -5,10 +5,43 @@ competition submission, without needing prior context on the project. It covers 
 write, how long each part should be, what tables/figures go where, the tone to write in,
 and how to strip out anything that reads as AI-generated before submitting.
 
-**Submission format:** PDF, MLA format, 12-point Times New Roman, double-spaced, 1-inch
-margins, page numbers, submitted via the competition's Google Form.
 
----
+**Submission format:** PDF **or** Word (.doc/.docx) — the competition-specific rules
+allow PDF only; the general site submission rules allow either. Since this is going into
+the competition specifically, **submit as PDF** to satisfy the stricter of the two rule
+sets, but draft in a word processor that exports cleanly to both (Google Docs or Word),
+so a .docx copy exists too in case it's ever needed.
+
+MLA format, 12-point Times New Roman, double-spaced, 1-inch margins, page numbers.
+Submitted via the competition's Google Form.
+
+**Submission category:** this is an **Original Research** submission (per the site's four
+accepted categories: Original Research, Literature Review, Opinion/Perspective, Science
+Communication) — "new findings from your own experiments or studies." Every section of
+this paper should read like original research, not a literature summary or a general-
+audience explainer. The literature review work done for this project is grounding and
+context for the original findings, not the paper's main content — don't let the related-
+work material accidentally take over more than its share of the page count (see Section 5
+for the word budget).
+
+**Eligibility reminders that affect how this gets written, not just formatted:**
+- Open to middle school and high school students. Write like a strong student paper, not
+  like an attempt to sound like a professional academic beyond what's natural — see
+  Section 2 on tone.
+- **The work must be entirely your own and not previously published anywhere else.**
+  This paper, and the underlying project, satisfies this — nothing here has been
+  published elsewhere.
+- **Write in clear, US English**, and check grammar and spelling specifically for US
+  conventions (e.g. "color" not "colour," "-ize" not "-ise" endings) — this is stated as
+  its own guideline, separate from general proofreading, so treat it as its own pass.
+- **Plagiarism is a rejection condition, not just a deduction.** Every claim taken from a
+  source needs an in-text citation (see Section 3.7a). Paraphrasing a source closely
+  without citing it, or citing it but keeping the original wording too close, both count
+  as plagiarism — when summarizing a paper's finding, restate it in your own words and
+  still cite it.
+- **Groups should only have one person submit** — not directly relevant here since this
+  is a solo submission, but worth double-checking the submission form only lists Anish,
+  not a team, if the form has a multi-name field.
 
 
 ---
@@ -74,11 +107,35 @@ covers what to write, Section 7 covers what to cut once it's written.
 
 ## 3. Full paper structure
 
-The competition requires these sections, "when applicable": Abstract, Introduction,
-Methods/Discussion, Results, Conclusion, References/Works Cited. Note their Methods and
-Discussion are combined into one section, not separate — that's slightly different from
-how the underlying project's own spec (Section 6/8) organizes things, so content needs to
-be remapped into their structure, not just copy-pasted in project order.
+The competition's required structure, stated in two places in their guidelines and
+consistent both times, is six sections:
+
+1. Abstract
+2. Introduction
+3. Methods / Discussion
+4. **Results**
+5. Conclusion
+6. References / Works Cited
+
+**Results is its own required section, separate from Methods/Discussion.** This is a
+literal structural requirement, not just an organizational suggestion, so the paper needs
+an actual section header that says "Results," containing the numbers, tables, and
+statistical tests, distinct from the section that explains how the systems were built and
+what the numbers mean. Methods and Discussion are combined into one section together
+(unusual — most papers separate those two — but that's what this competition asks for),
+while Results stands alone in between them structurally.
+
+Practically, that means: **Methods/Discussion explains what was built, why it was built
+that way, and what the results mean once they exist. Results is where the actual numbers,
+tables, and statistical tests live**, reported with minimal interpretation. Some brief
+framing sentences in Results are fine and normal ("Table 2 compares System B against a
+comparable published architecture"), but the interpretive argument (why the gap is
+explainable, what the coordinate-binding finding suggests, what the orientation-axis
+result means) belongs in Methods/Discussion, not Results.
+
+This is a different arrangement than the underlying project's own spec organizes things
+(which folds numbers and interpretation together per system), so content needs to be
+actively remapped into the competition's structure, not copy-pasted in project order.
 
 Target total length: **2,800–4,200 words** of body text (roughly 6–9 double-spaced pages
 before Works Cited, at 12pt Times New Roman). This is a reasonable length for a strong
@@ -86,8 +143,9 @@ student research paper — long enough to show real depth, short enough that a r
 reads the whole thing carefully rather than skimming.
 
 Write the sections in this order (not the order they appear in the final paper):
-**Methods/Results (has the most existing source material) → Discussion → Introduction →
-Limitations (folds into Discussion or stands alone) → Abstract → Title, last.**
+**Results (has the most existing source material, and is mostly assembling tables from
+already-sealed data) → Methods → Discussion → Introduction → Limitations (folds into
+Discussion or stands alone) → Abstract → Title, last.**
 
 ---
 
@@ -170,14 +228,11 @@ findings directly.
 
 ### 3.4 Methods / Discussion (combined, per the competition's required structure)
 
-**Length:** 1,400–2,000 words. This is the largest section by far.
+**Length:** 1,100–1,600 words. Numbers, tables, and statistical tests do NOT go here —
+they go in the standalone Results section (3.5) that follows. This section covers what
+was built, why, and what the numbers (once reported in Results) mean.
 
-Note: the competition wants Methods and Discussion combined into one section, not
-separate. Structure it as **Methods subsection → Results woven in per system → Discussion
-subsection at the end** rather than fully interleaving results and interpretation
-throughout — this keeps it readable while still meeting their required structure.
-
-#### 3.4.1 Data and evaluation (methods, ~250–350 words)
+#### 3.4.1 Data and evaluation methods (~250–350 words)
 
 Reuse System A's methods paragraph almost directly — it was already assessed as
 near-publication-quality prose. Cover:
@@ -187,7 +242,9 @@ near-publication-quality prose. Cover:
   segmentation-based approach fixed it, the asymmetric confidence threshold reasoning
   (merge errors are harmless, split errors are dangerous), the two-layer human validation
   process with its 86.7%/40% confident/uncertain accuracy split
-- Final split numbers: 234 objects, 883 images, 620/140/123 train/val/test
+- Final split numbers: 234 objects, 883 images, 620/140/123 train/val/test (the actual
+  Table 1 with these numbers belongs in Results, 3.5.1 — here, just describe how the
+  split was built)
 - **State the protocol limitation explicitly here, not left for a reviewer to catch:**
   published Cornell results typically use 5-fold cross-validation over all 885 images;
   this project used a single frozen object-wise split, opened once. This is a real
@@ -196,71 +253,59 @@ near-publication-quality prose. Cover:
   of an image's multiple labeled grasps — and cite Lenz, Lee, and Saxena 2015 here
   directly, since that's the paper that established this exact convention.
 
-**Table 1 goes here:** the split summary (objects/images per train/val/test).
+#### 3.4.2 System A — rule-based baseline, method (~120–180 words)
 
-#### 3.4.2 System A — rule-based baseline (methods + results, ~250–300 words)
-
-- Brief method: pretrained COCO detector, fixed category-to-grasp lookup table, frozen
+- Method only: pretrained COCO detector, fixed category-to-grasp lookup table, frozen
   before any evaluation, commit-verified
-- State the result: 57.7% (71/123), Wilson 95% CI [48.9, 66.1]
-- One or two sentences on the dominant failure mode: axis-aligned bounding boxes can only
-  produce 0° or 90° orientations, which fails on diagonal objects by construction — this
-  is a representational limitation, not a tuning failure, and is worth stating that way
+- One sentence on why this design predicts a specific limitation: axis-aligned bounding
+  boxes can only produce 0° or 90° orientations, which should fail on diagonal objects by
+  construction — state this as a prediction here, then confirm it's what happened once
+  Results (3.5.2) reports the actual number
 
-#### 3.4.3 System B — trained CNN/ResNet (methods + results, ~350–450 words)
+#### 3.4.3 System B — trained CNN/ResNet, method and interpretation (~300–400 words)
 
-- Brief method: custom CNN and fine-tuned ResNet18/34, sin(2θ)/cos(2θ) orientation
-  encoding
+- Method: custom CNN and fine-tuned ResNet18/34, sin(2θ)/cos(2θ) orientation encoding
 - **Cite Redmon and Angelova 2015 here explicitly**, stating that this encoding and the
   overall architecture (global regression: backbone → pooled features → output heads)
   matches their "Direct Regression" approach specifically, not GG-CNN or GR-ConvNet (which
   are pixel-wise, a fundamentally different architecture family — this distinction matters
   and should be stated, not glossed over)
-- State results: ResNet18 79.7% (98/123) [71.7, 85.8], best of the three, beating ResNet34
-  (70.7%) and the from-scratch CNN (23.6%) — briefly note this matches the expectation
-  that 620 training images can't make good use of ResNet34's extra capacity
-- **This is where P1's reframe belongs.** Present the comparison table against Redmon and
-  Angelova 2015's numbers (84.9% object-wise, RGB-D input, ~3,000 augmented examples per
-  image, vs. this project's 79.7%, RGB only, 620 real images). State plainly: every
-  resource difference points the same direction and explains the gap without appealing to
-  anything unmeasured. This reframes a "5.2 points behind a comparable published result
-  under materially tighter constraints" story, not an "18 points behind state of the art"
-  story (which is what an uncontextualized comparison to GR-ConvNet's 97.7% would
-  wrongly suggest — don't cite GR-ConvNet's number without this context, or explain
-  clearly why it's the wrong comparison).
-
-**Table 2 goes here:** System B vs. Redmon & Angelova 2015 (the comparison table already
-drafted in the research findings — architecture, angle encoding, input type, training
-data size, object-wise accuracy, side by side).
+- Note briefly why three architectures were tested (ResNet18, ResNet34, a from-scratch
+  CNN), and that ResNet34's extra capacity was expected to be hard to use well with only
+  620 training images — state the expectation here, confirm the outcome in Results
+- **This is where P1's interpretive reframe belongs — write the argument here, report the
+  numbers in Results.** State plainly: every resource difference between this project and
+  Redmon and Angelova 2015 (RGB-only vs. RGB-D, 620 real images vs. ~3,000 augmented
+  examples per image) points the same direction and explains the accuracy gap without
+  appealing to anything unmeasured. This is what turns the Results-section number into a
+  "comparable in-family result under materially tighter constraints" story rather than a
+  "far below state of the art" story. Don't cite GR-ConvNet's number here without this
+  same context, or explain clearly why it's the wrong comparison to reach for.
 
 **Figure recommendation:** 2–3 example sheets from `system_b_sheets/` showing predicted
 vs. ground-truth rectangles — pick ones that show a correct case and a clean failure case
 (prefer an angle-only miss, since that's the theoretically interesting failure mode).
+Figures can live in either Methods/Discussion or Results, wherever the surrounding text
+references them — keep the figure next to the paragraph that explains it.
 
-#### 3.4.4 System C — zero-shot VLM (methods + results, ~350–450 words)
+#### 3.4.4 System C — zero-shot VLM, method and interpretation (~350–450 words)
 
-- Brief method: GPT-4o accessed via API, 5 independent repeats per test image, frozen
-  prompt, contact-point-to-rectangle conversion
-- State results plainly, without softening: 12.4% mean per-repeat accuracy (76/615),
-  Wilson 95% CI [10.0, 15.2] — this is the headline number and it should be stated as
-  such, not buried
-- Report best-of-5 (35.0%) and majority-consensus (12.2%) as explicitly secondary,
-  labeled as not the headline
+- Method: GPT-4o accessed via API, 5 independent repeats per test image, frozen prompt,
+  contact-point-to-rectangle conversion
 - **This is where P2's reframe belongs — the paper's most important interpretive move.**
   State that the field of VLM-based grasping systems does not, as a rule, ask a VLM for
   raw coordinates: cite Jiao et al. 2025 (FreeGrasp — GPT-4o only selects which object,
   a separate module produces the actual grasp geometry), Kulshrestha et al. 2025
   (VLAD-Grasp — the VLM generates a goal image rather than numbers), and Yang et al. 2023
   (Set-of-Mark — the model refers to a labeled region instead of emitting coordinates).
-  State the interpretive claim precisely: this project's 12.4% is not evidence that VLMs
-  are simply "bad at grasping" (an established, uninteresting fact by this point in the
-  paper) — it is closer to a controlled measurement of what the field's near-universal
-  design choice (avoid asking VLMs for raw coordinates) is actually worth, since none of
-  the papers found actually benchmark that avoided path on a standard dataset under a
-  standard metric.
-- **Ground the mechanism with the failure taxonomy**, computed on test (n=615): 76
-  correct, 85 angle-only fail, 88 IoU-only fail, 365 both-fail (59.4%). State that the
-  dominant compound-failure pattern is consistent with a specific mechanism: a
+  State the interpretive claim precisely: System C's headline number, reported in Results,
+  is not evidence that VLMs are simply "bad at grasping" (an established, uninteresting
+  fact by this point in the paper) — it is closer to a controlled measurement of what the
+  field's near-universal design choice (avoid asking VLMs for raw coordinates) is actually
+  worth, since none of the papers found actually benchmark that avoided path on a standard
+  dataset under a standard metric.
+- Explain the mechanism behind the failure taxonomy (numbers reported in Results, 3.5.4):
+  the dominant compound-failure pattern is consistent with a specific mechanism, a
   text-coordinate binding problem, where the model's reasoning is often correct but the
   emitted numbers don't correspond to it.
 - **Cite Wang et al. 2025 (COGNITION) here as independent cross-domain support** — this is
@@ -271,53 +316,38 @@ vs. ground-truth rectangles — pick ones that show a correct case and a clean f
   described the path but clicked over 700 pixels off) — **verify this directly from
   COGNITION Sections A.3.2/A.3.3 before citing it, do not cite from a secondhand summary.**
 
-**Table 3 goes here:** the three-way failure taxonomy (angle-only / IoU-only / both),
-computed identically for A, B, and C — this table is one of the paper's strongest single
-visual arguments, since it shows the failure mode literally inverting between A and B and
-taking a third, different shape for C.
-
 **Figure recommendation:** 2–3 sheets from `comparison_sheets/` showing all three systems'
-predictions overlaid on the same image (the comparison sheets already have this format —
-green GT, red A, blue B, orange C×5). Pick one where C's coordinate-binding failure is
-visually obvious (the handoff notes pcd0285 as a strong example).
+predictions overlaid on the same image (green GT, red A, blue B, orange C×5). Pick one
+where C's coordinate-binding failure is visually obvious (the handoff notes pcd0285 as a
+strong example).
 
-#### 3.4.5 Cross-system comparison and orientation-axis finding (~250–350 words)
+#### 3.4.5 Cross-system interpretation and the orientation-axis finding (~300–400 words)
 
-- Report the direct statistical comparison: McNemar A vs. B (p = 1.4e-4), and A/C, B/C
-  tested against each of C's 5 repeats (worst-of-5 p-values 5e-12 and 1.6e-20)
-- State the strongest defensible ordering claim precisely: C's best-of-5 ceiling (35.0%,
-  upper bound 43.7%) sits below A's single-call lower bound (48.9%) — non-overlapping, so
-  the ordering claim doesn't depend on point estimates alone. This is a stronger, more
-  careful statistical statement than just listing percentages, and it should be presented
-  that way.
+- Introduce why the orientation axis was tested: axis-aligned rectangles can't represent
+  diagonal grasps (predicted for System A), sin/cos encoding is designed to handle
+  rotation (predicted for System B), and System C has no comparable structural handling
+  either way — state the hypothesis here, report the actual per-system movement in
+  Results (3.5.5)
 - **Present the orientation-axis finding as a methodological framing, not an empirical
-  claim** (this distinction matters and was flagged directly in the literature review): on
-  images where every labeled grasp is diagonal, System A drops 21.2 points, System B
-  gains 12.3 points, System C moves only 2.0 points. State clearly that the individual
-  facts here aren't surprising on their own (axis-aligned rectangles can't represent
-  diagonal grasps; sin/cos encoding is designed to handle rotation), but that
-  stratifying results by ground-truth orientation as a diagnostic tool — using the
-  direction each system moves on a shared, externally-sourced axis to localize where each
-  technique family breaks — did not turn up precedent in the literature search
-  conducted for this project. Frame it as a method other researchers could reuse, not as
-  a discovered fact about grasping.
-- **State the sample size limitation directly and immediately after the finding, not
-  hidden in a separate limitations section:** n = 20 diagonal images. The individual
-  numbers are weak evidence on their own; what's robust is the direction each system
-  class moves, not the magnitude.
-- Note the corroborating detail: System C's flat 2.0-point response on the diagonal
-  stratum is consistent with (not just coincidentally alongside) the compound-failure
-  taxonomy finding — two independent measurements pointing at the same underlying
-  mechanism (System C has effectively no orientation signal) is stronger than either
-  alone, and this is worth saying explicitly.
-- Note the grasps-per-image axis was also tested, found to contradict its own premise
-  (all three systems did worse, not better, on images with more labeled grasps, despite
-  more chances to match), and was explicitly not used to argue anything. This negative
-  result is worth including briefly — it demonstrates the same standard of evidence was
-  applied even when it didn't produce a usable finding.
-
-**Table 4 (optional, if space allows):** the orientation-stratified accuracy table (A/B/C
-× diagonal/non-diagonal).
+  claim once the numbers are reported** (this distinction matters and was flagged directly
+  in the literature review): stratifying results by ground-truth orientation as a
+  diagnostic tool, using the direction each system moves on a shared, externally-sourced
+  axis to localize where each technique family breaks, did not turn up precedent in the
+  literature search conducted for this project. Frame it as a method other researchers
+  could reuse, not as a discovered fact about grasping.
+- **State the sample size limitation directly, not hidden in a separate limitations
+  section:** n = 20 diagonal images. The individual per-system numbers are weak evidence
+  on their own; what's robust is the direction each system class moves, not the exact
+  magnitude.
+- Note the corroborating detail: System C's flat response on the diagonal stratum (Results
+  will report the exact figure) is consistent with, not just coincidentally alongside, the
+  compound-failure taxonomy finding from 3.4.4 — two independent measurements pointing at
+  the same underlying mechanism (System C has effectively no orientation signal) is
+  stronger evidence than either alone, and this is worth saying explicitly.
+- Note the grasps-per-image axis was also tested, found to contradict its own premise, and
+  was explicitly not used to argue anything (the raw finding is reported in Results,
+  3.5.5). This negative result is worth including briefly here as evidence the same
+  standard of proof was applied even when it didn't produce a usable finding.
 
 #### 3.4.6 Discussion (~300–450 words)
 
@@ -362,10 +392,81 @@ This is the "so what" section — go beyond what happened to what it means.
 
 ---
 
-### 3.5 Limitations
+### 3.5 Results
+
+**Length:** 500–700 words, plus tables. This is a required standalone section, not a
+subsection of Methods/Discussion — give it its own top-level heading in the paper.
+Report numbers plainly here; save the "why it matters" argument for the Methods/
+Discussion section above, which the reader has already read by this point.
+
+Keep the prose here short and let the tables carry the weight. A reasonable rhythm per
+subsection: one sentence introducing the table or figure, the table or figure itself, one
+or two sentences stating the headline number(s) precisely, and a single sentence pointing
+back to where the interpretation lives ("see Discussion" is fine and normal in a
+structure like this one).
+
+#### 3.5.1 Data split (~50–80 words)
+
+State the final split numbers plainly: 234 objects, 883 images, 620/140/123 train/val/
+test.
+
+**Table 1 goes here:** the split summary (objects/images per train/val/test).
+
+#### 3.5.2 System A results (~80–120 words)
+
+State the result: 57.7% (71/123), Wilson 95% confidence interval [48.9, 66.1]. Confirm
+the predicted failure mode from Methods: report the count of angle-only failures, and
+note this matches the axis-aligned-representation prediction.
+
+#### 3.5.3 System B results (~120–170 words)
+
+State results for all three architectures: ResNet18 79.7% (98/123) [71.7, 85.8], best of
+the three; ResNet34 70.7%; the from-scratch CNN 23.6%. Confirm this matches the Methods
+section's expectation that limited training data can't make good use of ResNet34's extra
+capacity.
+
+**Table 2 goes here:** System B vs. Redmon & Angelova 2015 (architecture, angle encoding,
+input type, training data size, object-wise accuracy, side by side — the comparison
+table already drafted in the research findings).
+
+#### 3.5.4 System C results (~150–200 words)
+
+State the headline number plainly, without softening: 12.4% mean per-repeat accuracy
+(76/615), Wilson 95% confidence interval [10.0, 15.2]. Report best-of-5 (35.0%) and
+majority-consensus (12.2%) as explicitly secondary, clearly labeled as not the headline.
+Report the failure taxonomy: 76 correct, 85 angle-only fail, 88 IoU-only fail, 365
+both-fail (59.4%).
+
+**Table 3 goes here:** the three-way failure taxonomy (angle-only / IoU-only / both),
+computed identically for A, B, and C — this table is one of the paper's strongest single
+visual arguments, since it shows the failure mode inverting between A and B and taking a
+third, different shape for C.
+
+#### 3.5.5 Cross-system comparison and orientation-axis results (~150–200 words)
+
+Report the statistical tests plainly: McNemar A vs. B (p = 1.4e-4); A vs. C and B vs. C
+tested against each of C's 5 repeats separately (worst-of-5 p-values 5e-12 and 1.6e-20).
+State the ordering result precisely: C's best-of-5 ceiling (35.0%, upper bound 43.7%)
+sits below A's single-call lower bound (48.9%), a non-overlapping comparison.
+
+Report the orientation-axis numbers: on the diagonal-grasp stratum (n=20), System A drops
+21.2 points, System B gains 12.3 points, System C moves 2.0 points. Report the
+grasps-per-image finding plainly as a negative result: all three systems performed worse,
+not better, on images with more labeled grasps, despite more chances to match; this axis
+was not used to argue anything further.
+
+**Table 4 (optional, if space allows):** the orientation-stratified accuracy table (A/B/C
+× diagonal/non-diagonal).
+
+---
+
+### 3.6 Limitations
 
 Can be its own short subsection at the end of Discussion, or folded in as a paragraph — a
-standalone subsection is probably cleaner given how much real material there is.
+standalone subsection is probably cleaner given how much real material there is. If kept
+separate, place it at the end of the Methods/Discussion section (3.4.6), before Results —
+limitations are methodological context, not a result, so they read more naturally before
+the numbers than after.
 
 **Length:** 200–350 words.
 
@@ -396,7 +497,7 @@ stated in one or two plain sentences, no more:
 
 ---
 
-### 3.6 Conclusion
+### 3.7 Conclusion
 
 **Length:** 150–250 words.
 
@@ -416,7 +517,7 @@ after all the detail in Methods/Discussion.
 
 ---
 
-### 3.7 References / Works Cited
+### 3.8 References / Works Cited
 
 MLA 9 format, alphabetized by author last name. **Every citation in this file needs to be
 independently verified before submission** — several are marked `[SEARCH-ONLY]` in the
@@ -428,18 +529,81 @@ papers), though not all 10 need to make it into the final paper if some don't ea
 place in the argument. Do not pad with citations that aren't actually load-bearing for a
 claim being made.
 
+#### 3.8a In-text citation mechanics (needed throughout the paper, not just here)
+
+The competition explicitly requires "proper MLA in-text citations" as its own separate
+line item, distinct from the Works Cited page — every claim pulled from a source needs
+both an in-text citation where the claim appears AND a matching entry in Works Cited.
+Missing either one is incomplete, and missing both is treated as plagiarism per the
+site's stated policy.
+
+**Standard format:** parenthetical, author's last name and page number, no comma between
+them: (Jiang 3306). If the author's name is already stated in the sentence, drop it from
+the parenthetical and give just the page: Jiang, Moseson, and Saxena introduced the
+five-parameter grasping rectangle (3306).
+
+**Two or three authors:** name all of them, last name only, joined with "and": (Lenz, Lee,
+and Saxena 712).
+
+**Four or more authors:** first author's last name plus "et al.": (Wang et al. 14).
+
+**Sources with no page numbers (most of the literature found for this project — arXiv
+preprints don't have fixed page numbers the way journal articles do):** use a paragraph
+or section number if the source has one, or just the author name with no number at all if
+neither exists. For example, citing COGNITION's appendix section directly: (Wang et al.,
+sec. A.3.2). For a source with no internal numbering at all, author name alone is
+acceptable: (Jiao et al.).
+
+**Multiple sources for one claim:** separate with a semicolon inside one parenthetical:
+(Morrison et al.; Kumra et al.).
+
+**Direct quotes over four lines** need to be set off as a block quote (indented, no
+quotation marks, citation after the final period) rather than run into the paragraph —
+this is unlikely to come up much in this paper since most citations here are
+paraphrased findings, not long quotes, but the COGNITION example quote in 3.4.4 is short
+enough to run inline with quotation marks.
+
+#### 3.8b Works Cited page formatting
+
+- Starts on its own new page, titled "Works Cited" (not "References," not "Bibliography"
+  — MLA specifically uses "Works Cited"), centered, no bold or underline
+- Alphabetized by first author's last name
+- **Hanging indent**: the first line of each entry starts at the left margin, every
+  subsequent line of that entry is indented half an inch. (Most word processors have a
+  "hanging indent" paragraph setting — don't do this by hand with spaces or tabs, it
+  breaks when the PDF is generated.)
+- Double-spaced, same as the rest of the paper, no extra blank line between entries
+- Titles of full works (books, journals, conference proceedings) are italicized. Titles
+  of articles or papers within a larger work are in quotation marks, not italicized
+- For conference papers (most of the sources found for this project): Author(s). "Paper
+  Title." *Conference/Proceedings Name*, Publisher, Year, page range.
+- For arXiv preprints (several of the sources found for this project, since they haven't
+  been published in a formal venue): Author(s). "Paper Title." *arXiv*, day month year of
+  posting, arxiv.org/abs/XXXXX.XXXXX. Include the specific date if known, not just the
+  year, since arXiv preprints can be revised.
+- Every source cited anywhere in-text must have a matching Works Cited entry, and every
+  Works Cited entry must be cited somewhere in-text. No orphaned citations either
+  direction — this is worth a manual cross-check pass right before submission (see
+  Section 8).
+
 ---
 
 ## 4. Full list of tables and figures
 
 | # | Type | Content | Section | Source data |
 |---|---|---|---|---|
-| 1 | Table | Object-wise split summary (train/val/test, objects, images) | Methods 3.4.1 | `final_split.csv` |
-| 2 | Table | System B vs. Redmon & Angelova 2015 (architecture, encoding, input, training size, accuracy) | Methods 3.4.3 | `system_b_results.md` + literature |
-| 3 | Table | Three-way failure taxonomy (angle-only / IoU-only / both), A vs. B vs. C | Methods 3.4.4 | `comparison_results.md` |
-| 4 | Table (optional) | Orientation-stratified accuracy, A/B/C × diagonal/non-diagonal | Cross-system 3.4.5 | `comparison_by_object.csv` or equivalent |
-| 5 | Figure | 2–3 System B sheets (correct case + angle-only failure case) | Methods 3.4.3 | `system_b_sheets/` |
-| 6 | Figure | 2–3 comparison sheets, all three systems overlaid, one showing C's coordinate-binding failure clearly | Methods 3.4.4 | `comparison_sheets/` (pcd0285 flagged as a strong example) |
+| 1 | Table | Object-wise split summary (train/val/test, objects, images) | Results 3.5.1 | `final_split.csv` |
+| 2 | Table | System B vs. Redmon & Angelova 2015 (architecture, encoding, input, training size, accuracy) | Results 3.5.3 | `system_b_results.md` + literature |
+| 3 | Table | Three-way failure taxonomy (angle-only / IoU-only / both), A vs. B vs. C | Results 3.5.4 | `comparison_results.md` |
+| 4 | Table (optional) | Orientation-stratified accuracy, A/B/C × diagonal/non-diagonal | Results 3.5.5 | `comparison_by_object.csv` or equivalent |
+| 5 | Figure | 2–3 System B sheets (correct case + angle-only failure case) | Methods 3.4.3 (referenced), placed near Results 3.5.3 | `system_b_sheets/` |
+| 6 | Figure | 2–3 comparison sheets, all three systems overlaid, one showing C's coordinate-binding failure clearly | Methods 3.4.4 (referenced), placed near Results 3.5.4 | `comparison_sheets/` (pcd0285 flagged as a strong example) |
+
+**Note on figure placement:** figures are visual evidence, so they can sit in the
+Results section next to the numbers they illustrate, even though the sentence explaining
+*why* they matter is back in Methods/Discussion. That's normal in papers with this kind
+of split structure — the reader has already read the explanation by the time they reach
+the picture.
 
 **Formatting note:** MLA does not use "Figure 1 / Table 1" numbering the same way
 scientific papers do by default — check current MLA guidance on labeling visuals (typically
@@ -461,20 +625,29 @@ optional depending on space.
 | Title | 12–18 words |
 | Abstract | 150–250 |
 | Introduction | 400–600 |
-| Methods/Discussion (combined) | 1,400–2,000 |
-| — Data & evaluation | 250–350 |
-| — System A | 250–300 |
-| — System B | 350–450 |
-| — System C | 350–450 |
-| — Cross-system + orientation finding | 250–350 |
+| **Methods / Discussion (combined section)** | **1,100–1,600** |
+| — Data & evaluation methods | 250–350 |
+| — System A method | 120–180 |
+| — System B method + interpretation | 300–400 |
+| — System C method + interpretation | 350–450 |
+| — Cross-system interpretation + orientation framing | 300–400 |
 | — Discussion | 300–450 |
-| Limitations | 200–350 |
+| — Limitations (if kept inside this section) | 200–350 |
+| **Results (standalone section)** | **500–700** |
+| — Data split numbers | 50–80 |
+| — System A results | 80–120 |
+| — System B results | 120–170 |
+| — System C results | 150–200 |
+| — Cross-system + orientation numbers | 150–200 |
 | Conclusion | 150–250 |
 | **Total body text** | **~2,800–4,200 words** |
 | Works Cited | not counted toward body length |
 
-(Subsection targets within Methods/Discussion sum to slightly more than the section
-range — that's expected; some tightening happens naturally in the edit pass.)
+(Subsection targets within Methods/Discussion and within Results each sum to slightly
+more than their parent section's range — that's expected; some tightening happens
+naturally in the edit pass. If Limitations is kept as its own top-level section rather
+than folded into Methods/Discussion, subtract its word count from the Methods/Discussion
+range above.)
 
 ---
 
@@ -511,10 +684,9 @@ Also, separately, before the paper is finalized:
 
 ## 7. Humanizer pass — remove AI-writing patterns before submission
 
-Run every section through this checklist once a full human draft exists. This is a
-**post-writing edit pass**, not a drafting tool — the sentences already need to exist in
-Anish's own words before this step; this step is about catching leftover patterns that
-happen to overlap with common AI tells, not generating anything new.
+Run every section through this checklist. This is a
+**writing edit pass**,  this step is about catching leftover patterns that
+happen to overlap with common AI tells
 
 ### How to use this section
 
@@ -654,3 +826,67 @@ citation), a negative result reported and explicitly not oversold (the grasps-pe
 axis), and a genuine, specific reaction to an unexpected finding (the from-scratch CNN
 beating a frontier VLM). Lean into these — they're what makes writing sound human, because
 they're the parts that actually are.
+
+---
+
+## 8. Final proofread and submission checklist
+
+The competition lists "be thoroughly proofread before submission" as its own explicit
+requirement, separate from formatting and citation correctness. Treat this as its own
+final pass, done after every other section in this file, not folded into the writing or
+humanizer passes.
+
+### Formatting, line by line against the stated rules
+
+- [ ] PDF file format (competition-specific rule is stricter than the general site rule
+      which also allows .doc/.docx — submit PDF)
+- [ ] 12-point Times New Roman throughout, including headings and Works Cited
+- [ ] Double-spaced throughout, including Works Cited (no extra blank lines between
+      Works Cited entries — double-spacing alone provides the separation)
+- [ ] 1-inch margins on all four sides
+- [ ] Page numbers present (MLA convention: upper right corner, with last name before the
+      number, e.g. "Talla 4")
+- [ ] MLA heading present on page 1 (name, instructor/mentor if applicable, course/
+      competition name, date — top left corner, not centered)
+- [ ] Title centered, plain text, no bold/italic/underline, no larger font size
+- [ ] Every table has a caption and is referenced by name in the surrounding prose
+- [ ] Every figure has a caption and is referenced by name in the surrounding prose
+- [ ] No curly quotation marks anywhere (check the final exported PDF specifically —
+      word processors often auto-convert straight quotes to curly ones on export even if
+      they looked correct while editing)
+- [ ] No em dashes anywhere in the final PDF
+
+### Citation cross-check
+
+- [ ] Every source cited in-text has a matching Works Cited entry
+- [ ] Every Works Cited entry is cited at least once in-text (no orphaned sources)
+- [ ] Every `[SEARCH-ONLY]`-flagged claim from the literature research (Section 6's
+      checklist) has been independently verified before being cited, or has been dropped
+      from the paper if it couldn't be confirmed
+- [ ] Works Cited is alphabetized correctly by first author's last name
+- [ ] Works Cited uses hanging indent, not manual spacing or tabs
+- [ ] No claim in the paper is taken from a source without a citation attached at the
+      point the claim is made (not just somewhere in the same paragraph)
+
+### Content and integrity
+
+- [ ] Object labels for groups 26, 56, 230, and 231 (if used anywhere in the paper) were
+      confirmed by Anish looking at the actual images, not adopted from either
+      AI-generated guess unconfirmed
+- [ ] Spelling and grammar checked specifically for US English conventions
+- [ ] The paper has not been published or submitted anywhere else previously
+- [ ] Read the full paper aloud once, start to finish, as the very last step before
+      exporting to PDF — this catches both grammar issues and any remaining sentences
+      that sound off in a way silent reading misses
+
+### Word count and structure sanity check
+
+- [ ] All six required sections present with clear headers: Abstract, Introduction,
+      Methods/Discussion, Results, Conclusion, Works Cited
+- [ ] Results contains numbers and tables, not interpretation — spot-check that no
+      paragraph in Results has drifted into arguing a point rather than reporting one
+- [ ] Total body length falls roughly within 2,800–4,200 words (Section 5) — significantly
+      under or over that range is worth a second look, not necessarily a problem, but
+      worth knowing why
+- [ ] Final exported PDF opens correctly and all pages are present, before submitting
+      through the Google Form
