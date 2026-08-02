@@ -61,9 +61,41 @@ MAX_EPOCHS = 150
 PATIENCE = 25
 WARMUP_EPOCHS = 3
 
+# Early stopping must not be allowed to anchor on a pre-training fluke.
+# The first run of the custom CNN did exactly that: epoch 0 scored 18.6%
+# by luck on an untrained network, nothing beat it within PATIENCE, and
+# the run was killed at epoch 25 with the UNTRAINED epoch-0 weights saved
+# as "best" -- while the training loss had meanwhile fallen from 2.50 to
+# 1.33, so the model was plainly still learning. Checkpoint selection and
+# the patience counter therefore both ignore the warmup epochs, and no
+# run may stop before MIN_EPOCHS.
+#
+# WHY 40, stated from the measured behaviour rather than from hindsight:
+# val accuracy on 140 images is extremely noisy, because one image is
+# worth 0.71 points. Measured over the first run, the mean epoch-to-epoch
+# swing in val accuracy is 6.7-10.1 points during epochs 3-40, with single
+# jumps as large as 20.7. Training loss, meanwhile, does most of its work
+# early and flattens: resnet18 falls 0.376 -> 0.220 by epoch 15 (-41%),
+# then only -5.7% more by epoch 25, then is flat. So by epoch 40 the loss
+# has plateaued and the run is past the phase where a lucky epoch can
+# masquerade as convergence.
+#
+# This is a floor, not a tuned constant: anything in roughly 30-60 serves
+# the same purpose, and it cannot improve a model, only prevent a run
+# being cut off before it has trained. It was set from the loss and
+# volatility curves above, NOT from where any model's best epoch landed.
+MIN_EPOCHS = 40
+
 HEAD_LR = 1e-3
 BACKBONE_LR = 1e-4
 WEIGHT_DECAY = 1e-4
+
+# The from-scratch CNN gets its own rate, chosen on val by
+# system_b_tune.py, rather than silently inheriting HEAD_LR. See that
+# file's module docstring/comments for why this matters: without it,
+# "pretrained beats from-scratch" would be confounded with "one arm got
+# a tuned rate and the other did not". None until swept and pasted in.
+CNN_LR = None
 
 # Loss weights. Start equal; any change is decided on VAL only.
 W_POS, W_ORI, W_SIZE = 1.0, 1.0, 1.0
@@ -164,7 +196,12 @@ def train_one(name, wandb_run=None):
         opt = torch.optim.AdamW(model.param_groups(BACKBONE_LR, HEAD_LR),
                                 weight_decay=WEIGHT_DECAY)
     else:
-        opt = torch.optim.AdamW(model.parameters(), lr=HEAD_LR,
+        if CNN_LR is None:
+            raise SystemExit(
+                "CNN_LR is unset. Run scripts/system_b_tune.py to sweep it on "
+                "val first -- see system_b_tune.py for why the CNN needs its "
+                "own tuned rate rather than inheriting HEAD_LR.")
+        opt = torch.optim.AdamW(model.parameters(), lr=CNN_LR,
                                 weight_decay=WEIGHT_DECAY)
 
     print(f"\n=== {name} ({n_par/1e6:.1f}M params) on {dev.type} ===")
@@ -184,7 +221,7 @@ def train_one(name, wandb_run=None):
             loss = batch_loss(model(x), targets, n, epoch)
             loss.backward()
             opt.step()
-            losses.append(float(loss))
+            losses.append(loss.item())
 
         train_loss = float(np.mean(losses))
         val_acc, val_ang = evaluate(model, val_ds, dev)
@@ -192,7 +229,9 @@ def train_one(name, wandb_run=None):
                         "val_acc": val_acc, "val_angle_err": val_ang})
 
         tag = ""
-        if val_acc > best_acc:
+        # Only epochs past the warmup are eligible to be "best", so an
+        # untrained network cannot win the checkpoint (see MIN_EPOCHS).
+        if epoch >= WARMUP_EPOCHS and val_acc > best_acc:
             best_acc, best_epoch = val_acc, epoch
             torch.save(model.state_dict(), ckpt)
             tag = "  <- best"
@@ -208,7 +247,7 @@ def train_one(name, wandb_run=None):
                            f"{name}/val_acc": val_acc,
                            f"{name}/val_angle_err": val_ang, "epoch": epoch})
 
-        if epoch - best_epoch >= PATIENCE:
+        if epoch >= MIN_EPOCHS and epoch - best_epoch >= PATIENCE:
             print(f"  early stop: no val improvement for {PATIENCE} epochs")
             break
 

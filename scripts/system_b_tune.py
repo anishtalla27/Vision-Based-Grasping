@@ -41,6 +41,18 @@ WEIGHTS = (1.0, 3.0, 10.0)
 EPOCHS = 30
 ARCH = "resnet18"          # swept on one architecture; applied to all three
 
+# The custom CNN gets its own learning-rate sweep, for fairness rather
+# than for score. The ResNets were given a considered discriminative
+# scheme (1e-4 backbone, 1e-3 heads, the standard fine-tuning setup),
+# while the from-scratch CNN simply inherited the head rate at 1e-3 with
+# nobody ever asking whether that suits a network trained from nothing.
+# Reporting "pretrained beats from-scratch" off the back of that would
+# confound the architecture question with the tuning question, and the
+# custom-CNN comparison is something spec section 5.3 explicitly asks
+# for. Sweeping on VAL equalises the care the two arms received.
+CNN_LRS = (1e-4, 3e-4, 1e-3, 3e-3)
+CNN_EPOCHS = 45
+
 OUT = INTERIM / "system_b_tuning.json"
 
 
@@ -71,6 +83,40 @@ def run(w):
     return best
 
 
+def run_cnn(lr):
+    """Train the from-scratch CNN at one learning rate. Val only."""
+    torch.manual_seed(T.SEED)
+    np.random.seed(T.SEED)
+    T.W_SIZE = 1.0
+    dev = T.device()
+
+    _, train_loader = T.loaders("train", augment=True, shuffle=True)
+    val_ds, _ = T.loaders("val", augment=False, shuffle=False)
+
+    model = build("cnn").to(dev)
+    opt = torch.optim.AdamW(model.parameters(), lr=lr,
+                            weight_decay=T.WEIGHT_DECAY)
+
+    best, best_ang, last_loss = -1.0, 90.0, float("nan")
+    for epoch in range(CNN_EPOCHS):
+        model.train()
+        losses = []
+        for x, t, n in train_loader:
+            opt.zero_grad()
+            loss = T.batch_loss(model(x.to(dev)), t.to(dev), n.to(dev), epoch)
+            loss.backward()
+            opt.step()
+            losses.append(loss.item())
+        last_loss = float(np.mean(losses))
+        acc, ang = T.evaluate(model, val_ds, dev)
+        if epoch >= T.WARMUP_EPOCHS and acc > best:
+            best, best_ang = acc, ang
+        if epoch % 15 == 0 or epoch == CNN_EPOCHS - 1:
+            print(f"    epoch {epoch:3d}  loss {last_loss:.4f}  "
+                  f"val_acc {acc*100:5.1f}%  val_ang {ang:5.1f}deg")
+    return best, best_ang, last_loss
+
+
 def main():
     print(f"Tuning W_SIZE on VAL with {ARCH}, {EPOCHS} epochs each.")
     print("Test is unreachable from here (system_b_train.loaders raises on it).\n")
@@ -88,10 +134,33 @@ def main():
         print(f"  W_SIZE {w:5.1f}   val {results[w]*100:5.1f}%{star}")
     print(f"\nPaste W_SIZE = {pick} into system_b_train.py")
 
+    print(f"\n\nTuning the custom CNN's learning rate on VAL, "
+          f"{CNN_EPOCHS} epochs each.")
+    print("Fairness, not score: the ResNets got a tuned scheme and the CNN "
+          "did not.\n")
+    cnn = {}
+    for lr in CNN_LRS:
+        print(f"  cnn lr = {lr:g}")
+        acc, ang, loss = run_cnn(lr)
+        cnn[lr] = {"val_acc": acc, "val_angle_err": ang, "final_train_loss": loss}
+        print(f"  -> best val {acc*100:.1f}%, angle err {ang:.1f}deg, "
+              f"final loss {loss:.4f}\n")
+
+    cnn_pick = max(cnn, key=lambda k: cnn[k]["val_acc"])
+    print("=== cnn learning-rate results (val) ===")
+    for lr in CNN_LRS:
+        star = "  <- selected" if lr == cnn_pick else ""
+        print(f"  lr {lr:<7g} val {cnn[lr]['val_acc']*100:5.1f}%  "
+              f"ang {cnn[lr]['val_angle_err']:5.1f}deg  "
+              f"loss {cnn[lr]['final_train_loss']:.4f}{star}")
+    print(f"\nPaste CNN_LR = {cnn_pick:g} into system_b_train.py")
+
     OUT.write_text(json.dumps(
         {"swept": "W_SIZE", "arch": ARCH, "epochs": EPOCHS,
          "val_accuracy": {str(k): v for k, v in results.items()},
-         "selected": pick}, indent=2))
+         "selected": pick,
+         "cnn_lr_sweep": {str(k): v for k, v in cnn.items()},
+         "cnn_lr_selected": cnn_pick}, indent=2))
     print(f"Wrote {OUT}")
 
 
