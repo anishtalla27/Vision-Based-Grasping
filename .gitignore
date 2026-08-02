@@ -51,6 +51,13 @@ data/interim/system_a_sheets/*
 !data/interim/system_b_sheets/
 data/interim/system_b_sheets/*
 !data/interim/system_b_sheets/*.png
+# Keep the System C evidence bundle in the audit trail, same reasoning.
+!data/interim/system_c_results.md
+!data/interim/system_c_predictions.csv
+!data/interim/system_c_consistency.csv
+!data/interim/system_c_sheets/
+data/interim/system_c_sheets/*
+!data/interim/system_c_sheets/*.png
 *.h5
 *.hdf5
 
