@@ -137,10 +137,12 @@ This is a different arrangement than the underlying project's own spec organizes
 (which folds numbers and interpretation together per system), so content needs to be
 actively remapped into the competition's structure, not copy-pasted in project order.
 
-Target total length: **2,800–4,200 words** of body text (roughly 6–9 double-spaced pages
-before Works Cited, at 12pt Times New Roman). This is a reasonable length for a strong
-student research paper — long enough to show real depth, short enough that a reviewer
-reads the whole thing carefully rather than skimming.
+Target total length: **4,500–6,000 words** of body text (roughly 10–13 double-spaced
+pages before Works Cited, at 12pt Times New Roman). This is a reasonable length for a
+strong student research paper — long enough to show real depth, short enough that a
+reviewer reads the whole thing carefully rather than skimming. Extra weight goes to the
+Introduction, System C, and Discussion, since those are where the paper's own thinking
+lives and are the parts worth genuinely expanding rather than padding.
 
 Write the sections in this order (not the order they appear in the final paper):
 **Results (has the most existing source material, and is mostly assembling tables from
@@ -623,24 +625,24 @@ optional depending on space.
 | Section | Word count target |
 |---|---|
 | Title | 12–18 words |
-| Abstract | 150–250 |
-| Introduction | 400–600 |
-| **Methods / Discussion (combined section)** | **1,100–1,600** |
-| — Data & evaluation methods | 250–350 |
-| — System A method | 120–180 |
-| — System B method + interpretation | 300–400 |
-| — System C method + interpretation | 350–450 |
-| — Cross-system interpretation + orientation framing | 300–400 |
-| — Discussion | 300–450 |
-| — Limitations (if kept inside this section) | 200–350 |
-| **Results (standalone section)** | **500–700** |
-| — Data split numbers | 50–80 |
-| — System A results | 80–120 |
-| — System B results | 120–170 |
-| — System C results | 150–200 |
-| — Cross-system + orientation numbers | 150–200 |
-| Conclusion | 150–250 |
-| **Total body text** | **~2,800–4,200 words** |
+| Abstract | 200–300 |
+| Introduction | 650–950 |
+| **Methods / Discussion (combined section)** | **2,500–3,200** |
+| — Data & evaluation methods | 300–450 |
+| — System A method | 150–220 |
+| — System B method + interpretation | 400–550 |
+| — System C method + interpretation | 500–650 |
+| — Cross-system interpretation + orientation framing | 350–450 |
+| — Discussion | 450–600 |
+| — Limitations (if kept inside this section) | 250–350 |
+| **Results (standalone section)** | **900–1,250** |
+| — Data split numbers | 80–120 |
+| — System A results | 150–220 |
+| — System B results | 200–280 |
+| — System C results | 250–330 |
+| — Cross-system + orientation numbers | 250–320 |
+| Conclusion | 250–380 |
+| **Total body text** | **~4,500–6,000 words** |
 | Works Cited | not counted toward body length |
 
 (Subsection targets within Methods/Discussion and within Results each sum to slightly
@@ -885,7 +887,7 @@ humanizer passes.
       Methods/Discussion, Results, Conclusion, Works Cited
 - [ ] Results contains numbers and tables, not interpretation — spot-check that no
       paragraph in Results has drifted into arguing a point rather than reporting one
-- [ ] Total body length falls roughly within 2,800–4,200 words (Section 5) — significantly
+- [ ] Total body length falls roughly within 4,500–6,000 words (Section 5) — significantly
       under or over that range is worth a second look, not necessarily a problem, but
       worth knowing why
 - [ ] Final exported PDF opens correctly and all pages are present, before submitting
