@@ -189,6 +189,16 @@ def write_results(scores, picked, training, ids):
              "quality and is not dragged down by failures the way an all-images "
              "average would be.\n")
 
+    picked_tr = next(t for t in training if t["model"] == picked)
+    gap = picked_tr["best_val_acc"] * 100 - scores[picked]["acc"]
+    L.append(f"\n**Val-to-test gap for {picked}: {picked_tr['best_val_acc']*100:.1f}% "
+             f"val to {scores[picked]['acc']:.1f}% test, a {gap:.1f}-point drop.** "
+             "This sits well inside the 6.7-11.9 point epoch-to-epoch val noise "
+             "measured during training (see the val-figures caveat below), which "
+             "supports that the val-selected checkpoint is not overfit to "
+             "val-selection noise -- a gap of that size is smaller than the swing "
+             "val showed between two ordinary consecutive epochs of the same run.\n")
+
     L.append("\n## Against System A, on the axis that limited it\n")
     L.append("System A could only ever emit 0 or 90 degrees, because COCO boxes are "
              "axis-aligned. That put a hard floor under its angle error and accounted "

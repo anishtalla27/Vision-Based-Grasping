@@ -43,6 +43,14 @@ data/interim/*
 !data/interim/system_a_sheets/
 data/interim/system_a_sheets/*
 !data/interim/system_a_sheets/*.png
+# Keep the System B evidence bundle in the audit trail, same reasoning.
+!data/interim/system_b_results.md
+!data/interim/system_b_predictions.csv
+!data/interim/system_b_tuning.json
+!data/interim/system_b_training.json
+!data/interim/system_b_sheets/
+data/interim/system_b_sheets/*
+!data/interim/system_b_sheets/*.png
 *.h5
 *.hdf5
 
