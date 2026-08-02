@@ -231,6 +231,7 @@ def test_split_hygiene():
     # Exercise the sentinel against a throwaway path so the real one is
     # never created here. Creating it for real would burn the sealed run.
     real = R.TEST_SENTINEL
+    existed_before = real.exists()
     with tempfile.TemporaryDirectory() as tmp:
         R.TEST_SENTINEL = Path(tmp) / "sentinel.json"
         try:
@@ -243,7 +244,13 @@ def test_split_hygiene():
                 check("second test claim is refused", True)
         finally:
             R.TEST_SENTINEL = real
-    check("the real test sentinel was not created by this check", not real.exists())
+    # The claim is that THIS SCRIPT did not touch the real sentinel, not that
+    # the sentinel does not exist. Once the sealed test run has legitimately
+    # happened the file is there for good, and asserting its absence would
+    # turn a correct state of the world into a permanent red check.
+    check("this check did not create or remove the real test sentinel",
+          real.exists() == existed_before,
+          f"exists={real.exists()} before={existed_before}")
 
 
 # ------------------------------------------------------- 5. frozen modules
