@@ -226,8 +226,34 @@ Things worth carrying into the paper:
 
 The "defined once, not adjusted afterward" rule was enforced structurally, not on trust: the table was committed in `853de49`, and `git ls-tree` confirms no scoring code was tracked in the repository at that commit.
 
-### 10.7 Current status / next step
+### 10.7 System B outcome (Section 5.3, completed)
 
-Sections 4, 5.1 and 5.2 are complete. Shared infrastructure now exists for the rest of the project: `scripts/cornell_data.py` (loading and the grasp-rectangle convention) and `scripts/grasp_metric.py` (the Section 6 metric), both of which Systems B and C must reuse so the three systems cannot quietly disagree about what is being measured. The metric was validated against an independent rasterised IoU before anything was scored with it.
+Three architectures trained on train (620), selected on val (140), evaluated once on the same sealed 123-image test split System A used. Test was opened exactly once, by `scripts/system_b_eval.py`, after model selection was finished.
 
-Next is **Section 5.3, System B (learned grasp predictor)**: custom CNN and fine-tuned ResNet18/34, trained on the 620-image train split with the 140-image val split for model selection, and evaluated on the same untouched 123-image test split. System C has not been started.
+| Model | Params | Test accuracy | Mean angle error | Mean IoU (matched) |
+|---|---|---|---|---|
+| **ResNet18 (selected on val)** | 11.3M | **79.7%** (98/123) | 3.9 deg | 0.447 |
+| ResNet34 | 21.4M | 70.7% (87/123) | 3.9 deg | 0.424 |
+| Custom CNN (from scratch) | 1.0M | 23.6% (29/123) | 24.2 deg | 0.391 |
+
+**System B vs System A, now valid since both are the same sealed test set:**
+
+| | System A | System B |
+|---|---|---|
+| Test accuracy | 57.7% | **79.7%** (+22.0 points) |
+| Orientations representable | 2 (0 and 90 deg) | continuous |
+| Failures on angle alone | 13/52 | 4/25 |
+
+Things worth carrying into the paper:
+
+- **Architecture selection happened on val, before test was ever opened**, specifically to avoid picking whichever model got lucky on the sealed set. ResNet18 beat ResNet34 on both val (83.6% vs 77.1%) and test (79.7% vs 70.7%), consistent with the plan's prediction that 620 training images cannot use ResNet34's extra capacity. All three test numbers are reported regardless, not just the selected model's.
+- **Orientation was the specific axis System B was built to fix, and it worked.** System A could only ever emit 0 or 90 degrees; System B regresses (cos 2θ, sin 2θ) on the unit circle, which has no seam at the metric's 180-degree symmetry point. ResNet18's angle-only failure count dropped in proportion (13/52 for System A vs 4/25 for System B) and its mean angle error is 3.9 degrees, a number System A could not even produce since its orientation was quantised.
+- **The val-to-test gap was small and in the expected direction** (83.6% val to 79.7% test for ResNet18, a 3.9-point drop), well inside the epoch-to-epoch val noise measured during training (6.7-11.9 points), which is a reassuring sign rather than evidence of overfitting to val.
+- **The custom CNN failed to learn the task**, even after its own learning-rate sweep. Five rates were tried on val (3e-5 through 3e-3); the winner, 1e-4, also had the lowest final training loss of all five, so the failure is not an artifact of an untuned rate. Training loss plateaued around 0.5-0.6 rather than continuing to fall the way the ResNets' losses did, which points to the from-scratch architecture lacking the capacity or the inductive bias (no ImageNet features) to solve grasp orientation from 620 images, not to a tuning oversight.
+- **Two real bugs were caught by review before being reported as results**, both recorded in commit history: an early-stopping rule that let a lucky pre-training epoch become the "best" checkpoint (fixed with a warmup-ineligibility rule and an epoch-40 floor, justified from measured loss-plateau and val-volatility curves rather than from where any model's best epoch happened to land), and a size-loss term so underweighted relative to position that predicted rectangles collapsed toward small near-squares (diagnosed via an 8-image overfit sanity check, then correctly resolved on val rather than on that 8-image result, which pointed the wrong way).
+
+### 10.8 Current status / next step
+
+Sections 4, 5.1, 5.2 and 5.3 are complete. Shared infrastructure (`scripts/cornell_data.py`, `scripts/grasp_metric.py`) has now been reused unchanged across two independently-built systems.
+
+Next is **Section 5.4, System C (vision-language model baseline)**: prompt a pretrained multimodal model directly with the image, parse its output into the same rectangle format, and test consistency across repeated prompts on the same image. Section 6's full three-way comparison (with category and condition breakdowns) follows once System C is done.
