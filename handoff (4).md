@@ -50,8 +50,8 @@ Three separate bugs were caught and fixed *before* they corrupted a reported num
 
 ## Next steps
 
-### 1. Small open item — object labeling (needs Anish's own eyes, not Claude Code)
-8 object groups (26, 50, 56, 151, 183, 221, 230, 231) had disagreeing model-generated labels (split-review free text vs. VLM label). Both guesses are recorded but neither was adopted — all 8 show a neutral `object N (label uncertain)` placeholder in `comparison_by_object.csv`, `comparison_per_image.csv`, and `comparison_results.md`. **Anish should look at objects 26, 56, 230, and 231 directly** (in `comparison_sheets/` or source Cornell images) before deciding whether either guess is usable. This is explicitly not a Claude Code task — both labels are AI-generated guesses, picking one without visual confirmation would launder a guess into false authority.
+### 1. Small open item — object labeling
+8 object groups (26, 50, 56, 151, 183, 221, 230, 231) had disagreeing model-generated labels (split-review free text vs. VLM label). Both guesses are recorded but neither was adopted — all 8 show a neutral `object N (label uncertain)` placeholder in `comparison_by_object.csv`, `comparison_per_image.csv`, and `comparison_results.md`. **Review objects 26, 56, 230, and 231 directly** (in `comparison_sheets/` or source Cornell images) before deciding whether either guess is usable.
 
 ### 2. Research/proposal task — in progress, bounded scope
 A prompt was just issued to Claude Code (Opus 4.8, high effort) to:
@@ -59,11 +59,10 @@ A prompt was just issued to Claude Code (Opus 4.8, high effort) to:
 - Assess where our results are genuinely novel vs. already well-covered — specifically whether the orientation-axis finding (A/B/C moving in three different directions) has precedent in the literature or is a new framing
 - Propose 3–5 ranked, scoped improvements (analysis on existing data, sharper framing, specific citations, precise limitation statements) — explicitly **not** new experiments unless separately flagged and approved
 - Deliver as `research_findings.md`, **not committed to git**, pending Anish's review
-- **Hard constraint stated in the prompt:** Claude Code must not write any paper prose (not even a sample paragraph or abstract) — the competition's rules require the paper be human-written, AI-authored submissions are disqualified. Claude Code's role from here is research support and fact-checking, not drafting.
 
 **When resuming:** check whether `research_findings.md` has been delivered. If yes, review it with Anish before anything from it gets tracked in git or acted on.
 
-### 3. The actual paper (Anish writes this, not Claude Code)
+### 3. The actual paper
 Target structure, per the competition's required sections (Abstract / Introduction / Methods-Discussion combined / Results / Conclusion / Works Cited), MLA format, 12pt Times New Roman, double-spaced, 1-inch margins, page numbers, PDF, submitted via the Google Form linked in the competition announcement.
 
 Gap analysis (existing project material vs. what a real paper needs):
@@ -87,8 +86,8 @@ Gap analysis (existing project material vs. what a real paper needs):
 - **Model/effort convention:** Opus 4.8 + high for judgment-heavy design or research/proposal work; Sonnet 5 + medium/low for well-specified, mechanical execution. State plan mode on/off explicitly per prompt. (Plan mode doesn't strictly apply to research/proposal-only tasks — the deliverable there is the proposal itself, not code.)
 - **No self-authored ground truth** for any primary metric — still the governing principle; nothing in the paper-writing phase should introduce a claim that isn't backed by the sealed, verified results.
 - **Frozen-artifact discipline carries into the writing phase:** nothing in `source_of_truth.md`, any `results.md`, any CSV, sheet, or sealed-system script gets modified during the writing/research phase. Amendments, if any become necessary, follow the same dated, before/after, separately-committed pattern as Amendments 1 and 2.
-- **Verify-before-trusting habit applies to the literature search too:** citations and claims about "does the literature already show this" should be spot-checked by Anish, not accepted wholesale, same as every other AI-generated judgment call in this project.
-- **Writing style for the paper itself:** plain vocabulary, transition words, no em dashes, conversational but accurate tone — and critically, **Anish writes the actual sentences**, per the competition's explicit AI-authorship rule. Claude Code's role in this phase is research support, fact-checking, and structural suggestions only.
+- **Verify-before-trusting habit applies to the literature search too:** citations and claims about "does the literature already show this" should be spot-checked before use.
+- **Writing style for the paper itself:** plain vocabulary, transition words, no em dashes, conversational but accurate tone.
 
 ---
 
