@@ -79,6 +79,18 @@ Checked directly against source after the panel round, because the first pass ve
 | Framework length contradictions | **Fixed.** §3.2, §3.3, and §3.7 carried the old pre-rescale targets (150-250, 400-600, 150-250) that contradicted §5. All three now match §5 and point to it as authoritative. |
 | Title hedging on "Rule-Based" | **Left as is.** System A is a hybrid, but the Introduction and the System A method both correct this within the first page, and the honest alternatives are clumsy. |
 
+## Fifth pass, small corrections
+
+All five verified against code or sealed data. All five were real.
+
+| Item | Result |
+|---|---|
+| System B's "about four degrees" | **Was conditioned and unstated, now qualified.** `system_b_results.md` reports mean angle error 3.9 degrees on **correct predictions only**, which the Results section already says. The Conclusion dropped that condition. Now reads "to within about four degrees when it succeeds." |
+| Guard wording mismatch | **Methods was the imprecise one, corrected.** `system_a_lookup.py:154` defines `detection_on_object` as rejecting "a box that does not contain the segmented object's **centroid**." Results already said centroid; Methods said "the segmented object." Methods now matches the code. |
+| Note buried inside Figure 2's caption | **Moved out.** The pcd0676/0348/0824/0316 sheet-availability note sat after "Caption below:" and would have been typeset as part of the caption. It is now a separately labeled source note, with the caption text on its own line. Figures 1 and 3 were checked and carry no embedded notes. |
+| "Worth X-ing" clustering | **Two more changed.** "Worth knowing too" and "a prediction worth testing" are gone. One instance remains in the Conclusion and one in Methods, far apart. |
+| Orphaned five-attempts clause | **Dropped.** The sentence already opens with "Counting System C as correct if any of its five repeats passed," so the trailing clause repeated the condition without the difficulty-floor framing that once justified it. |
+
 **Still to do before submission:** confirm object groups 26, 56, 230, 231 visually if you name any object; US-English spelling pass; MLA formatting in a word processor; read aloud once.
 
 **Word count:** 5,875 words of body text, inside the 4,500-6,000 target. Four of the five top-level sections are in band; Methods and discussion runs 39 words over its 3,200 cap, about 1.2%. I stopped trimming there rather than cut material the reviewer panel flagged as load-bearing. Placeholders, tables, and this note excluded.
@@ -129,7 +141,7 @@ The result is 234 objects across 883 images, split 620 for training, 140 for val
 
 ### System A, rule-based baseline
 
-System A detects an object with a COCO-pretrained detector, looks the category up in a fixed table, and converts the result into a rectangle centered on the object, oriented from the box. The table was committed before any evaluation code existed, so no entry could be tuned toward a score. That was enforced structurally, not by good intentions. One qualification belongs here rather than in Results. After the first evaluation returned 40.7%, I found the detector was frequently boxing background clutter, added a guard requiring the box to contain the segmented object, and recalibrated one width constant on training only. No lookup entry changed, and both numbers stay on record.
+System A detects an object with a COCO-pretrained detector, looks the category up in a fixed table, and converts the result into a rectangle centered on the object, oriented from the box. The table was committed before any evaluation code existed, so no entry could be tuned toward a score. That was enforced structurally, not by good intentions. One qualification belongs here rather than in Results. After the first evaluation returned 40.7%, I found the detector was frequently boxing background clutter, added a guard requiring the box to contain the segmented object's centroid, and recalibrated one width constant on training only. No lookup entry changed, and both numbers stay on record.
 
 Something else changes how the headline should be read. COCO's 80 categories do not cover most of what Cornell photographs, so the detector produces nothing on more than half the test images. Those fall through to a geometric fallback, the platform-segmentation routine written for the split, which locates the object without knowing what it is. System A is a hybrid: a category rule where the detector fires, a category-free geometric estimate where it does not. Calling it rule-based is fair since nothing is learned from grasp labels, but the lookup table is not doing most of the work.
 
@@ -244,7 +256,9 @@ Counted by failure type, ResNet18 missed 25 of 123 images, of which 4 failed on 
 
 > **[FIGURE 1]** Insert `data/interim/system_b_sheets/resnet18_0133.png`. Caption below: "Fig. 1. System B (ResNet18) prediction in blue against labeled ground-truth grasps in green."
 
-> **[FIGURE 2]** Insert `data/interim/comparison_sheets/compare_0348.png`. Caption below: "Fig. 2. An orientation-only failure. The predicted rectangle overlaps the object well (IoU 0.38) but is rotated 47 degrees from any labeled grasp." Note: of ResNet18's four angle-only failures (pcd0676, pcd0348, pcd0824, pcd0316) only pcd0348 has a rendered sheet.
+> **[FIGURE 2]** Insert `data/interim/comparison_sheets/compare_0348.png`.
+> **Source note, not part of the caption:** of ResNet18's four angle-only failures (pcd0676, pcd0348, pcd0824, pcd0316) only pcd0348 has a rendered sheet, which is why this one was chosen.
+> **Caption to typeset below the figure:** "Fig. 2. An orientation-only failure. The predicted rectangle overlaps the object well (IoU 0.38) but is rotated 47 degrees from any labeled grasp."
 
 ### System C
 
@@ -283,7 +297,7 @@ Stated most conservatively, System C's best-of-five ceiling of 35.0% carries an 
 | Axis-aligned | 103 | 61.2% [51.5, 70.0] | 77.7% [68.7, 84.6] | 12.0% [9.5, 15.1] |
 | Diagonal | 20 | 40.0% [21.9, 61.3] | 90.0% [69.9, 97.2] | 14.0% [8.5, 22.1] |
 
-Systems A and B agreed on 74 of 123 images, both correct on 60 and both wrong on 14. They disagreed on 49, with System B alone correct on 38 and System A alone correct on 11. Counting System C as correct if any of its five repeats passed, all three systems succeeded on 22 images and all three failed on 10, with the vision-language model given five attempts on each.
+Systems A and B agreed on 74 of 123 images, both correct on 60 and both wrong on 14. They disagreed on 49, with System B alone correct on 38 and System A alone correct on 11. Counting System C as correct if any of its five repeats passed, all three systems succeeded on 22 images and all three failed on 10.
 
 The grasps-per-image axis is reported as a negative result. Grouped into images with 2 to 4 labeled grasps, 5 to 7, and 8 to 25, all three systems scored worst on the last group (48.0%, 64.0%, and 11.2% for A, B, and C) rather than the first, contradicting the premise that more labeled grasps should make a match easier.
 
@@ -291,11 +305,11 @@ The grasps-per-image axis is reported as a negative result. Grouped into images 
 
 Scoring three approaches through one pipeline showed that their errors are not interchangeable, and that is the finding I would keep if I could keep only one. The accuracies set the stage rather than settling anything: 57.7% for the rule-based system, 79.7% for the fine-tuned ResNet18, and 12.4% for zero-shot GPT-4o, whose best-of-five ceiling still falls below the rule-based system's lower 95% confidence bound.
 
-What the comparison bought was the ability to see three failure modes side by side on the same images, scored by the same code. System A locates objects but cannot rotate the gripper, because an axis-aligned box has no way to express a diagonal grasp. System B rotates well, to within about four degrees, and its remaining errors are mostly about placing the rectangle rather than turning it. System C fails before either question is reached, because the coordinates it emits are frequently not bound to the object its own sentences have just described correctly. Those are three distinguishable problems, and knowing which one you have tells you what to fix.
+What the comparison bought was the ability to see three failure modes side by side on the same images, scored by the same code. System A locates objects but cannot rotate the gripper, because an axis-aligned box has no way to express a diagonal grasp. System B rotates well, to within about four degrees when it succeeds, and its remaining errors are mostly about placing the rectangle rather than turning it. System C fails before either question is reached, because the coordinates it emits are frequently not bound to the object its own sentences have just described correctly. Those are three distinguishable problems, and knowing which one you have tells you what to fix.
 
 The third failure is the one worth carrying forward, because another system does not have it. VLAD-Grasp uses a pretrained vision-language model zero-shot on this same dataset and scores far higher, and it never asks for a coordinate. It also does considerably more downstream and grades itself without the angle criterion I use, so its number and my 12.4% cannot simply be subtracted. What I can say is that asking a vision-language model for raw pixel coordinates carries a large, measurable cost, that the cost appears as the written explanation and the emitted numbers diverging rather than as the model failing to see, and that the same divergence has been observed independently in a completely different task.
 
-If that reading is right, it makes a prediction worth testing. Rerunning System C with Set-of-Mark prompting, where the model selects among labeled regions instead of emitting coordinates, should recover a substantial part of the gap. If it does not, my diagnosis is wrong and the problem lies in perception after all, which would be worth knowing too. That experiment is cheap, it is the obvious next step, and I have not run it.
+If that reading is right, it points to one experiment that would settle it. Rerunning System C with Set-of-Mark prompting, where the model selects among labeled regions instead of emitting coordinates, should recover a substantial part of the gap. If it does not, my diagnosis is wrong and the problem lies in perception after all, which I would rather find out than assume. That experiment is cheap, it is the obvious next step, and I have not run it.
 
 ## Works Cited
 
