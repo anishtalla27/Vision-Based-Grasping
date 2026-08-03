@@ -175,7 +175,8 @@ don't lock the title until the Discussion is written.
 
 ### 3.2 Abstract
 
-**Length:** 150–250 words. Write this last.
+**Length:** 200–300 words (see Section 5, which is authoritative on all length
+targets). Write this last.
 
 **Structure (roughly one to two sentences each):**
 1. The problem / research question — why grasp prediction technique comparison matters
@@ -197,7 +198,8 @@ findings directly.
 
 ### 3.3 Introduction
 
-**Length:** 400–600 words.
+**Length:** 650–950 words (see Section 5, which is authoritative on all length
+targets).
 
 **Structure:**
 1. **Open with the real-world problem**, briefly: robotic grasping needs a way to decide
@@ -501,7 +503,8 @@ stated in one or two plain sentences, no more:
 
 ### 3.7 Conclusion
 
-**Length:** 150–250 words.
+**Length:** 250–380 words (see Section 5, which is authoritative on all length
+targets).
 
 Do not simply restate the abstract. A conclusion should feel like it's zooming back out
 after all the detail in Methods/Discussion.
@@ -541,13 +544,18 @@ site's stated policy.
 
 **Standard format:** parenthetical, author's last name and page number, no comma between
 them: (Jiang 3306). If the author's name is already stated in the sentence, drop it from
-the parenthetical and give just the page: Jiang, Moseson, and Saxena introduced the
-five-parameter grasping rectangle (3306).
+the parenthetical and give just the page: Jiang et al. introduced the five-parameter
+grasping rectangle (3306).
 
-**Two or three authors:** name all of them, last name only, joined with "and": (Lenz, Lee,
-and Saxena 712).
+**Two authors:** name both, last name only, joined with "and": (Redmon and Angelova 1316).
+In the Works Cited entry, invert only the first: "Redmon, Joseph, and Anelia Angelova."
 
-**Four or more authors:** first author's last name plus "et al.": (Wang et al. 14).
+**Three or more authors:** first author's last name plus "et al.", both in text and in
+Works Cited: (Lenz et al. 712), and the entry reads "Lenz, Ian, et al." This is the MLA 9
+rule and it changed from older editions. MLA 7 listed up to three authors in full, so
+guidance found online may still show "Lenz, Lee, and Saxena." Do not follow it. The cutoff
+is three, not four, and it applies to every source in this paper with three or more names:
+Jiang, Kumra, Lenz, and Morrison.
 
 **Sources with no page numbers (most of the literature found for this project — arXiv
 preprints don't have fixed page numbers the way journal articles do):** use a paragraph
