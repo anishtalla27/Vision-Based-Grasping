@@ -603,6 +603,59 @@ toward ``same object'' and were resolved that way, and the other two had
 no lean. One image from the smaller side of each was dropped instead,
 accounting for the 883 images retained out of 885.
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.82\textwidth, height=7.2cm,
+  ybar,
+  bar width=26pt,
+  ymin=0, ymax=100,
+  ylabel={Accuracy (\%)},
+  ylabel style={font=\normalsize},
+  symbolic x coords={A,B,C,Cb},
+  xtick={A,B,C,Cb},
+  xticklabels={{System A},{System B},{System C},{C best-of-5}},
+  xticklabel style={font=\normalsize},
+  yticklabel style={font=\normalsize},
+  enlarge x limits=0.16,
+  ymajorgrids=true,
+  grid style={dashed,gray!40},
+  axis on top,
+  tick style={black},
+]
+% each bar placed at its own symbolic x, so shift is suppressed
+\addplot[fill=gray!25,draw=black,bar shift=0pt,
+  error bars/.cd, y dir=both, y explicit]
+  coordinates { (A, 57.7) += (0,10.5) -= (0,11.5) };
+\addplot[fill=gray!55,draw=black,bar shift=0pt,
+  error bars/.cd, y dir=both, y explicit]
+  coordinates { (B, 79.7) += (0,7.4)  -= (0,8.9)  };
+\addplot[fill=gray!85,draw=black,bar shift=0pt,
+  error bars/.cd, y dir=both, y explicit]
+  coordinates { (C, 12.4) += (0,5.0)  -= (0,4.4)  };
+\addplot[fill=white,draw=black,bar shift=0pt,
+  error bars/.cd, y dir=both, y explicit]
+  coordinates { (Cb, 35.0) += (0,10.5) -= (0,10.4) };
+% System A before the post-hoc guard was added
+\addplot[only marks,mark=-,mark size=13pt,very thick,draw=black]
+  coordinates { (A, 40.7) };
+\end{axis}
+\end{tikzpicture}
+\caption{Test-set accuracy with 95\% object-clustered intervals, the
+primary intervals in this paper. System A 57.7 [46.2, 68.2], System B
+79.7 [70.8, 87.1], System C 12.4 [8.0, 17.4], and System C's
+best-of-five ceiling 35.0 [24.6, 45.5], which requires five calls per
+image rather than one. The horizontal rule across the System A bar
+marks 40.7\%, the figure that system scored before the post-hoc
+geometric guard was added, so the size of that correction is visible
+here rather than only in the text.}
+\label{fig:headline}
+\end{figure}
+
+The ordering in Fig.~\ref{fig:headline} is the paper's main result, and
+the per-system subsections below give the counts behind each bar.
+
 \subsection*{System A}
 
 System A achieved 57.7\% on the test split (71 of 123), with a 95\%
@@ -724,6 +777,25 @@ System C's predicted center fell outside the convex hull containing
 every labeled grasp on 53.4\% of calls (328 of 614). System A showed
 failures of this type on 7.0\% of the calls in which it attempted a
 grasp (8 of 115 scored calls), and System B on 6.5\% (8 of 123).
+Table~\ref{tab:hull} puts the three side by side.
+
+\begin{table}[H]
+\centering
+\caption{Predicted grasp centers falling outside the convex hull of an
+image's labeled grasps. This is a diagnostic across scored calls, not a
+partition, so it overlaps the failure categories in
+Table~\ref{tab:taxonomy} rather than adding to them.}
+\label{tab:hull}
+\begin{tabular}{lrr}
+\toprule
+System & Calls scored & Center outside hull \\
+\midrule
+System A &  115 &   8 (7.0\%)  \\
+System B &  123 &   8 (6.5\%)  \\
+System C &  614 & 328 (53.4\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 Agreement across System C's five runs was low. Mean self-agreement was
 22.0\%, with a mean pairwise angle spread of 5.8 degrees and mean
