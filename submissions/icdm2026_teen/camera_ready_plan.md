@@ -1,5 +1,17 @@
 # ICDM 2026 Teen Track: Camera-Ready Plan (S30345)
 
+> **Status (24 Sept 2026): implemented.** Every item in sections 1 to 4 is in
+> `icdm2026_teen.tex`, the PDF is built at `final_submission/icdm2026_teen.pdf`
+> (5 pages), and the point-by-point response is in
+> `reviewer_feedback_2026-09-24.md`. The numbers in section 3 came out as:
+> orientation ceiling 118/123 (95.9%) within 30 deg and 103/123 (83.7%) within
+> 15 deg; clean System A CI [28.0, 53.2]; B minus clean A +39.0 [25.2, 52.9],
+> p < 0.0001; clean A minus one-call C +28.3 [16.9, 40.0], p = 0.0001; clean A
+> minus best-of-five C +5.7 [-6.1, 18.0], p = 0.45. `review_tracking.csv` was
+> not in the Drive backup, so the 251 manually reviewed boundaries are reported
+> instead of the assistant's uncertain-call count. Remaining: registration, the
+> camera-ready form when the instructions email arrives, and the poster.
+
 Accepted 24 Sept 2026. Camera-ready due **4 Oct 2026, 11:59 p.m.** (10 days).
 Hard limits: IEEE Computer Society proceedings template, **5 pages including
 figures, tables, and references**. Working file: `icdm2026_teen.tex`. Build

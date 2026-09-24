@@ -107,3 +107,13 @@ tmp/
 submissions/**/sig_*.png
 submissions/cjsj2026/TallaAnish_form*.pdf
 submissions/cjsj2026/form_fill.tex
+
+# LaTeX build artifacts
+submissions/**/*.aux
+submissions/**/*.log
+submissions/**/*.out
+submissions/**/*.bbl
+submissions/**/*.blg
+# ICDM camera-ready evidence: clean System A rerun and the orientation ceiling.
+!data/interim/system_a_predictions_precorrection.csv
+!data/interim/orientation_ceiling.md

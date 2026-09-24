@@ -1,7 +1,6 @@
 \documentclass[10pt,conference,compsoc]{IEEEtran}
 
 \usepackage{amsmath}
-\usepackage{balance}
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{microtype}
@@ -10,7 +9,7 @@
 
 \graphicspath{{../../figures/}}
 
-\title{Benchmarking Rule-Based, Learned, and Zero-Shot Vision-Language Grasp Prediction Under a Unified Evaluation Protocol}
+\title{Benchmarking Rule-Based, Learned, and Zero-Shot GPT-4o Grasp Prediction Under a Unified Evaluation Protocol}
 
 \author{\IEEEauthorblockN{Anish Talla}
 \IEEEauthorblockA{\textit{High School Student}\\
@@ -21,26 +20,27 @@ United States}}
 
 \begin{abstract}
 I compared three ways to predict a robotic grasp from an RGB image: a
-detector-assisted heuristic, a neural network trained on grasp labels, and a
-general-purpose vision-language model (VLM) used zero-shot. All three systems
-were tested on the same object-wise split of the Cornell Grasping Dataset and
-scored by the same rectangle metric. A fine-tuned ResNet18 passed on 79.7\%
-of test images, and a second training round with a stable recipe and three
-seeds per architecture put the learned system at 84.0\%. The heuristic
-passed on a post-hoc-corrected 57.7\%, up from 40.7\% before the
-correction. GPT-4o passed on 12.4\% of calls across five independent runs
-per image. Object-clustered resampling left the order unchanged. Their errors were different. The heuristic struggled with
-orientation, the ResNet18 usually missed on placement, and GPT-4o failed
-both criteria on 59.3\% of calls. Its predicted
-center lay outside the convex hull containing all labeled grasp corners on 53.4\%
-of parsed calls, compared with 7.0\% and 6.5\% for the other systems. That
-pattern suggested the model could see a grasp but not express it as
-coordinates. A fourth run tested this directly by showing the same model
-label-free candidate grasps drawn on the image and asking it to choose one
-by number. On three candidate menus, including one with every mark drawn
-the same size, its accuracy stayed at the random floor of the menu, and it
-preferred a grasp closing along the object's long axis regardless of mark
-size. The failure is in the grasp choice, not in emitting coordinates.
+detector-assisted heuristic, a neural network trained on grasp labels, and
+GPT-4o used zero-shot with one frozen prompt. All three systems saw the same
+object-wise test split of the Cornell Grasping Dataset, returned the same
+rectangle, and were scored by the same code. Supervision and tuning effort
+were not equalized, and the paper says where that matters. A fine-tuned
+ResNet18 passed on 79.7\% of test images, and a second training round with a
+stable recipe and three seeds per architecture put the learned system at
+84.0\%. The heuristic passed on 40.7\% before a post-hoc correction and
+57.7\% after it. GPT-4o passed on 12.4\% of calls across five independent
+runs per image. Object-clustered resampling left the order unchanged. The
+errors differed. The heuristic, limited to two orientations, struggled with
+angle. The ResNet18 usually missed on placement. GPT-4o failed both
+criteria on 59.3\% of calls, and its predicted center lay outside the convex
+hull of all labeled grasp corners on 53.4\% of parsed calls, against 7.0\%
+and 6.5\% for the other systems. My first explanation was that the model
+could see a grasp but not express it as coordinates. A fourth run tested
+that directly by drawing label-free candidate grasps on the image and asking
+the same model to choose one by number. On three candidate menus its
+accuracy stayed at the random floor, and it kept preferring a grasp closing
+along the object's long axis. The failure is in the grasp choice, not in
+emitting coordinates.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -52,75 +52,93 @@ multimedia data mining, spatial grounding
 
 A robot has to make a geometric decision before it can close its gripper:
 where the fingers should land, how the gripper should rotate, and how far the
-jaws should open. A programmer can write that decision into a set of rules. A
-neural network can learn it from labeled examples. A VLM can also be asked for
-the answer directly, even if it has never been trained for grasp prediction.
-The cost and setup differ sharply across these approaches, yet their reported
-accuracies are hard to compare when the input, output, or scoring rule changes
-with the method.
+jaws should open. A practitioner starting a grasping project has three cheap
+options. Write the decision as rules on top of an off-the-shelf detector.
+Train a small network on a few hundred labeled images. Or ask a
+general-purpose VLM for the answer with no grasp training at all. Published
+numbers for these options are not comparable, because each paper changes the
+input modality, the output type, or the scoring rule along with the method.
 
-I built one system of each kind and kept those parts fixed. Each system saw
-the same 123 held-out RGB images, returned the same geometric representation,
-and was scored against the same Cornell labels by one implementation of the
-standard rectangle test \cite{jiang2011,lenz2015}. I also reconstructed
-object identities so that no physical object crossed between training and
-test. The statistical analysis resamples whole objects because several test
-images are rotated views of the same item.
+I built one system of each kind and held three things fixed: every system
+saw the same 123 held-out RGB images, returned one grasp rectangle, and was
+scored against the same Cornell labels by one implementation of the standard
+rectangle test \cite{jiang2011,lenz2015}. That is what ``unified'' means in
+this paper. It does not mean equal supervision or equal tuning: the network
+is trained on Cornell labels, the heuristic is handed a detector and a
+segmentation, and the VLM gets one prompt. The comparison is between
+complete pipelines, and the budget differences are stated where they matter.
 
-I first ask which system predicts the most valid rectangles, then look at
-where each system goes wrong, and finally test the most natural explanation
-of the VLM's failure with a fourth run that removes its coordinate output. The three systems missed different parts of the
-metric. I report those failures with a common taxonomy and a separate check
-of whether each predicted center lands near any labeled grasp region.
+Two factors are the focus. The first is orientation. The heuristic can emit
+only $0^\circ$ or $90^\circ$, and the learned system regresses a continuous
+angle, so the gap between them isolates what a continuous orientation head
+buys. The second is the VLM's output interface. When a VLM scores poorly on
+raw coordinates, the failure could sit in choosing a grasp or in expressing
+that choice as pixels. A fourth run separates the two by removing the
+coordinate output entirely. Everything else that differs between the
+systems is treated as context, not as a controlled variable.
 
-Current dense grasp detectors already report higher Cornell scores
-\cite{kumra2020}. My aim here is different: compare three practical starting
-points without changing the test when the method changes.
+The contribution is threefold: a controlled comparison on an object-wise
+split with object-clustered inference; a shared failure taxonomy with a
+center-hull check that locates where each system fails; and a hypothesis
+test whose result overturned the explanation I first proposed for the VLM.
+Dense grasp detectors already report higher Cornell scores \cite{kumra2020}.
+The aim here is different: compare three practical starting points without
+changing the test when the method changes.
 
 \section{Related Work}
 
 Jiang \emph{et al.} introduced the Cornell dataset and its rectangle
-representation of a grasp \cite{jiang2011}. The rectangle stores the center,
-orientation, opening, and jaw depth. Under the usual Cornell test, a
+representation of a grasp \cite{jiang2011}. Under the usual test, a
 prediction passes when it is within $30^\circ$ of a labeled grasp and its
-intersection over union (IoU) is greater than 25\% \cite{lenz2015}. Redmon
-and Angelova used a neural network to regress one rectangle and reported
-84.9\% object-wise accuracy with RGB-D input \cite{redmon2015}. GR-ConvNet
-and other pixel-wise models report higher scores, although they make a dense
-prediction instead of regressing one rectangle for the whole image
-\cite{kumra2020}.
+intersection over union (IoU) exceeds 25\% \cite{lenz2015}; the two-stage
+deep network of Lenz \emph{et al.} reached 75.6\% object-wise with RGB-D
+input. Redmon and Angelova regressed one rectangle with a network and
+reported 84.9\% object-wise, again with depth \cite{redmon2015}. System B
+follows their single-rectangle formulation but uses RGB only, so that all
+three systems share one input. GR-ConvNet and other pixel-wise models
+report higher scores, but they make a dense prediction instead of
+regressing one rectangle for the whole image \cite{kumra2020}; I do not
+compare against them.
 
-VLM-based grasping systems usually do not ask the language model for the final
-pixel coordinates. Set-of-Mark prompting has the model choose among regions
-already marked on an image \cite{yang2024}. VLAD-Grasp has a VLM draw the
-grasp, then recovers a pose with depth prediction, segmentation, and
-point-cloud alignment \cite{kulshrestha2025}. System C tests a smaller
-pipeline: show GPT-4o the image and ask it to return the coordinates itself.
-Its score should therefore be read as the result of that output method, not
-as a limit on VLM-based grasping.
+VLM-based grasping systems usually do not ask the language model for the
+final pixel coordinates. Set-of-Mark prompting has the model choose among
+regions already marked on an image \cite{yang2024}. VLAD-Grasp has a VLM
+draw the grasp, then recovers a pose with depth prediction, segmentation,
+and point-cloud alignment \cite{kulshrestha2025}. System C removes all of
+that scaffolding and asks GPT-4o for the coordinates directly; System D adds
+back the simplest possible scaffold, a numbered menu of candidates, without
+any labels. Their scores describe those two output methods, not a limit on
+VLM-based grasping.
 
 \section{Experimental Design}
 
 \subsection{Dataset, Split, and Metric}
 
 Cornell contains 885 RGB-D images of household objects, with several positive
-grasp rectangles on most images. I used only RGB. Two images were dropped
-because their object boundaries could not be resolved, leaving 883.
+grasp rectangles on most images. I used only RGB.
 
 Cornell does not include object IDs, so I reconstructed them from the frame
 sequence. The procedure segmented the object from the photography platform
 and compared consecutive masks with color and area descriptors that tolerate
-rotation. Ambiguous boundaries were reviewed manually. I set the thresholds
-asymmetrically because the two possible mistakes have different costs. If two
-objects are merged, the combined group still stays in one split. If one
-object is split in two, its images can leak into both training and test.
+rotation. I set the thresholds asymmetrically because the two possible
+mistakes have different costs. If two objects are merged, the combined group
+still stays in one split. If one object is split in two, its images can leak
+into both training and test. Of 884 consecutive-frame boundaries, 478 were
+accepted automatically as the same object and 155 as different objects. The
+remaining 251 (28.4\%) fell in the ambiguous band or had a failed
+segmentation, and were routed to manual review.
 
-An automated first pass assigned a decision and confidence to each ambiguous
-boundary. In a blind 30-boundary audit, its calls agreed with my labels on
-86.7\% of confident cases and 40.0\% of uncertain ones. I then decided every
-uncertain call and every high-risk ``different object'' call. Table
-\ref{tab:split} shows the final seed-42 split. A second check confirmed that
-no object appears in more than one partition.
+An AI assistant made a first pass over those 251, logging a decision and a
+confidence for each. In a blind audit of 30 of them, its calls agreed with
+mine on 86.7\% of confident cases and 40.0\% of uncertain ones, so I then
+decided every uncertain call, every ``different object'' call, and every
+call whose reasoning relied on a failed segmentation myself. Six boundaries
+stayed ambiguous after that review. Four with a directional lean were
+resolved toward ``same'', the low-risk direction. Two had no lean at all;
+rather than guess, I excluded one image on the smaller side of each
+boundary, leaving 883 images. Neither was an annotation error. Table
+\ref{tab:split} shows the final seed-42 split. A second check confirmed
+that no object appears in more than one partition.
 
 \begin{table}[t]
 \caption{Object-wise Cornell split.}
@@ -153,14 +171,20 @@ category to a center, upper, or end grasp. I calibrated the global opening and
 jaw-size constants on training labels only. The COCO vocabulary misses most
 Cornell objects, so a platform-segmentation fallback supplies a box when the
 detector cannot. The rule closes the gripper across the box's narrow
-dimension. It can output only $0^\circ$ or $90^\circ$.
+dimension. It can output only $0^\circ$ or $90^\circ$. That design limit
+has a measurable ceiling: 118 of the 123 test images (95.9\%) have at least
+one labeled grasp within the metric's $30^\circ$ tolerance of one of those
+two angles, and 103 (83.7\%) have one within $15^\circ$. Only five test
+images are unreachable at any placement, so the constraint caps System A
+near 96\%, not near its score.
 
 The first test run scored 40.7\%. Its rendered predictions exposed a defect:
 some accepted detections covered background clutter instead of the object on
 the platform. I added a guard requiring the detection to contain the
 segmented object's centroid and recalibrated the global constants on training
 data. The score rose to 57.7\%. Test output prompted that change, so 57.7\%
-is post-hoc and 40.7\% remains the clean pre-correction result.
+is post-hoc. All statistical comparisons below use the clean 40.7\% unless
+labeled otherwise.
 
 \subsection{System B: Learned Predictor}
 
@@ -183,11 +207,12 @@ constant learning rate, and kept the best of roughly a hundred noisy
 validation epochs. A second round kept the model, loss, data, and split and
 changed only the recipe: cosine learning-rate decay over a fixed 100 epochs,
 an exponential moving average of the weights, three seeds per architecture,
-and no checkpoint selection, with the final averaged weights reported.
-Test-time augmentation over eight dihedral views, combined by taking the
-medoid rectangle, was adopted only because it raised mean validation
-accuracy. Four selection rules were written down before the test split was
-opened a second time, and every configuration that touched test is reported.
+and no checkpoint selection. Test-time augmentation over eight dihedral
+views, combined by taking the medoid rectangle, was adopted only because it
+raised mean validation accuracy. Four selection rules were written down
+before the test split was opened a second time, and every configuration
+that touched test is reported. System B therefore received far more
+development effort than Systems C and D, which each ran one frozen prompt.
 
 \subsection{System C: Zero-Shot VLM}
 
@@ -213,7 +238,7 @@ same model the same test images with candidate grasps drawn on a zoomed crop
 and asks for the number of the one it would use. Candidates come only from
 the platform-segmentation mask: principal-component analysis gives the
 centroid, long axis, and extent, and candidates are positions along the long
-axis crossed with four jaw-travel directions 45$^\circ$ apart, so every grasp
+axis crossed with four jaw-travel directions $45^\circ$ apart, so every grasp
 angle is within the metric's tolerance of some candidate. Opening and jaw
 width use System A's train-calibrated constants. Numbering is re-shuffled on
 every call. Because the menu is fixed before the model sees it, each run
@@ -221,13 +246,13 @@ carries its own floor (expected accuracy of a uniformly random choice) and
 ceiling (whether any candidate passes).
 
 Three menus were run, each on the full test split with five repeats: twelve
-marks at three positions; four marks at the centroid only, drawn at real
-size; and the same four marks drawn at one uniform length, with the prompt
-stating that length is not to scale. The last two exist because on thin
-objects the correct marks are the smallest on the image, so a preference for
-large marks would mimic a preference for the long-axis grasp. The prompt was
-developed on 30 training images for parse rate and glyph reading only, and
-each menu's test run was called once under its own sentinel.
+marks at three positions; four marks at the centroid drawn at real size; and
+the same four marks drawn at one uniform length, with the prompt stating
+that length is not to scale. The last two menus exist because on thin
+objects the correct marks are the smallest on the image, so a preference
+for large marks would mimic a preference for the long-axis grasp. The
+prompt was developed on 30 training images for parse rate and glyph reading
+only.
 
 \subsection{Statistical and Failure Analysis}
 
@@ -248,21 +273,23 @@ the annotated grasp corners.
 
 \subsection{Overall Accuracy}
 
-ResNet18 passed 98 of 123 images (79.7\%). The corrected heuristic passed 71
-(57.7\%), and GPT-4o passed 76 of 615 calls (12.4\%). Its five runs ranged
-from 9.8\% to 14.6\%. At least one GPT-4o call passed on 43 of the 123 images,
-which gives a best-of-five ceiling of 35.0\%. Table~\ref{tab:accuracy} includes
-the object-clustered intervals.
+ResNet18 passed 98 of 123 images (79.7\%). The heuristic passed 50 before
+its correction (40.7\%) and 71 after it (57.7\%). GPT-4o passed 76 of 615
+calls (12.4\%); its five runs ranged from 9.8\% to 14.6\%. At least one
+GPT-4o call passed on 43 of the 123 images, a best-of-five ceiling of
+35.0\%. Table~\ref{tab:accuracy} gives the object-clustered intervals.
 
 \begin{table}[t]
-\caption{Accuracy with object-clustered 95\% confidence intervals.}
+\caption{Accuracy with object-clustered 95\% confidence intervals. The
+corrected System A row is post-hoc and is not used in the paired tests.}
 \label{tab:accuracy}
 \centering
 \begin{tabular}{lrr}
 \toprule
 System & Accuracy & 95\% CI \\
 \midrule
-A: heuristic, corrected & 57.7\% & [46.2, 68.2] \\
+A: heuristic, pre-correction & 40.7\% & [28.0, 53.2] \\
+A: heuristic, corrected (post-hoc) & 57.7\% & [46.2, 68.2] \\
 B: ResNet18, round 1 & 79.7\% & [70.8, 87.1] \\
 B: ResNet34, round 2, 3 seeds & \textbf{84.0\%} & [73.9, 92.1] \\
 C: GPT-4o, one call & 12.4\% & [8.0, 17.4] \\
@@ -271,47 +298,58 @@ C: best of five & 35.0\% & [24.6, 45.5] \\
 \end{tabular}
 \end{table}
 
-ResNet18 led the corrected heuristic by 22.0 points. The bootstrap interval
-for that difference was [9.7, 35.1], with permutation $p=0.0031$. The
-corrected heuristic led GPT-4o's best-of-five ceiling by 22.8 points [9.2,
-35.6], $p=0.0060$, and its expected one-call score by 45.4 points [33.8,
-55.6], $p<0.0001$. Giving each object equal weight produced 51.3\%, 75.4\%,
-and 10.5\% for A, B, and one-call C. That calculation changed the size of the
-gaps but not their order.
+Against the clean heuristic, ResNet18 led by 39.0 points, bootstrap
+interval [25.2, 52.9], permutation $p<0.0001$. The clean
+heuristic led GPT-4o's expected one-call score by 28.3 points
+[16.9, 40.0], $p=0.0001$, and its best-of-five ceiling by 5.7
+points [-6.1, 18.0], $p=0.45$; the last gap is the only one
+whose interval includes zero. Using the post-hoc 57.7\% instead, the B--A
+gap was 22.0 points [9.7, 35.1], $p=0.0031$, and A led best-of-five C by
+22.8 points [9.2, 35.6], $p=0.0060$. Giving each object equal weight
+produced 38.5\%, 75.4\%, and 10.5\% for clean A, B, and one-call C,
+which changed the size of the gaps but not their order.
 
 The second training round chose ResNet34 on mean final-weight validation
-accuracy (81.4\% against 81.2\% for ResNet18) and used augmentation. Its
-three seeds scored 84.6, 83.7, and 83.7\% on test, a mean of 84.0\% with
-interval [73.9, 92.1]; ResNet18 under the same recipe averaged 82.6\%.
-Re-running the first-round recipe at two new seeds gave 82.9\% and 80.5\%,
-so 79.7\% was a low-side single draw, and the first round's nine-point gap
-between ResNet18 and ResNet34 was run-to-run noise. Round 2 leads A by 26.3
-points [14.8, 38.3], $p=0.0002$; its 4.3-point lead over round 1 does not
-exclude zero.
+accuracy (81.4\% against 81.2\% for ResNet18). Its three seeds scored 84.6,
+83.7, and 83.7\% on test, a mean of 84.0\% with interval [73.9, 92.1];
+ResNet18 under the same recipe averaged 82.6\%. Re-running the first-round
+recipe at two new seeds gave 82.9\% and 80.5\%, so 79.7\% was a low-side
+single draw and the first round's nine-point gap between ResNet18 and
+ResNet34 was run-to-run noise. Round 2's 4.3-point lead over round 1 does
+not exclude zero. For a single-rectangle regressor without depth, these
+scores sit between the 75.6\% of Lenz \emph{et al.} and the 84.9\% of
+Redmon and Angelova, both obtained with depth input
+\cite{lenz2015,redmon2015}.
 
 \subsection{Failure Patterns}
 
 The error counts in Table~\ref{tab:taxonomy} separate the systems more clearly
-than accuracy alone. Thirteen of A's 52 failures had enough overlap and missed
-only the angle test, which fits a system limited to two orientations. B had
-four angle-only failures. Fifteen of its 25 misses failed only on overlap, so
-placement was the larger remaining problem. C failed both tests on 365 of 615
-calls (59.3\%).
+than accuracy alone. The correction moved System A mostly out of the
+``both'' row: 20 of its clean run's 34 both-criteria failures came from
+detector boxes the guard later rejected as off the object, and 14 of those
+images passed once the segmentation fallback took over. Its angle-only
+count barely changed, 15 before and 13 after, which fits a system limited
+to two orientations. B had four angle-only failures. Fifteen of its 25 misses
+failed only on overlap, so placement was the larger remaining problem. C
+failed both tests on 365 of 615 calls (59.3\%).
 
 \begin{table}[t]
-\caption{Shared failure taxonomy. Percentages use all attempts.}
+\caption{Shared failure taxonomy. Percentages use all attempts. System A
+is shown before (clean) and after (post-hoc) its correction.}
 \label{tab:taxonomy}
 \centering
 \footnotesize
-\begin{tabular}{lrrr}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrr}
 \toprule
-Outcome & A ($n=123$) & B ($n=123$) & C ($n=615$) \\
+Outcome & A clean & A post-hoc & B & C \\
+& ($n=123$) & ($n=123$) & ($n=123$) & ($n=615$) \\
 \midrule
-Correct & 71 (57.7) & 98 (79.7) & 76 (12.4) \\
-Angle only & 13 (10.6) & 4 (3.3) & 85 (13.8) \\
-Overlap only & 18 (14.6) & 15 (12.2) & 88 (14.3) \\
-Both & 13 (10.6) & 6 (4.9) & 365 (59.3) \\
-No prediction & 8 (6.5) & 0 (0.0) & 1 (0.2) \\
+Correct & 50 (40.7) & 71 (57.7) & 98 (79.7) & 76 (12.4) \\
+Angle only & 15 (12.2) & 13 (10.6) & 4 (3.3) & 85 (13.8) \\
+Overlap only & 16 (13.0) & 18 (14.6) & 15 (12.2) & 88 (14.3) \\
+Both & 34 (27.6) & 13 (10.6) & 6 (4.9) & 365 (59.3) \\
+No prediction & 8 (6.5) & 8 (6.5) & 0 (0.0) & 1 (0.2) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -355,7 +393,7 @@ and the short-axis candidate, which passes on 55\% of images, in 17\%.
 Stated confidence was ``high'' on 556 of 560 full-menu calls, 21\% of them
 correct. Every reply parsed. The candidate at the centroid closing across
 the short axis, with no model at all, scored 55.3\% [41.8, 68.0], level
-with System A.
+with corrected System A.
 
 \begin{table}[t]
 \caption{System D on three candidate menus, same model and test images,
@@ -384,64 +422,85 @@ use a VLM without making it emit the final coordinates, and both add machinery
 that System C does not have \cite{yang2024,kulshrestha2025}.
 
 On a sample of C's failures, I read rationales that named a plausible part of
-the object while the coordinates landed elsewhere, which together with the
-53.4\% center-hull rate suggested a coordinate-binding hypothesis: the model
+the object while the coordinates landed elsewhere. Together with the 53.4\%
+center-hull rate, that suggested a coordinate-binding explanation: the model
 recognizes a useful region in words and loses it while mapping the answer
-into pixels. System D tested that hypothesis and it failed. Taking the
-coordinates away and offering a menu with a 79.7\% ceiling did not recover
-the choice, and the preference for closing along the long axis survived
-menus with no end-straddling candidates and with every mark the same size.
-From a top-down photograph, two fingertip pads straddling the end of an
-elongated object do look like they pinch a narrow part; in three dimensions
-the second finger lands on top of the object. The failure is better
-described as grasp reasoning from a single 2-D view than as text failing to
-bind to coordinates.
+into pixels. Other explanations fit the same evidence, for instance that the
+model does not understand the image's coordinate frame or scale. System D
+was designed so that all of these would predict the same thing: with the
+coordinate output removed and a menu whose ceiling is 79.7\%, the choice
+should recover. It did not. Accuracy stayed at the menu's random floor, and
+the preference for closing along the long axis survived menus with no
+end-straddling candidates and with every mark the same size. From a
+top-down photograph, two fingertip pads straddling the end of an elongated
+object do look like they pinch a narrow part; in three dimensions the
+second finger lands on top of the object. The failure is better described
+as grasp reasoning from a single 2-D view than as text failing to bind to
+coordinates.
+
+The orientation result is more ordinary but useful. The two-angle
+constraint itself removes only five test images from System A's reach,
+because most Cornell images carry several labels and one of them is
+usually near an axis. Its 13 angle-only failures are therefore mostly
+cases of closing across the wrong one of the two axes, not of a diagonal
+object that no axis-aligned grasp could fit. A continuous orientation
+head fixes both: System B had four angle-only failures and a mean angle
+error of $3.9^\circ$. System D's label-free candidate at the centroid,
+closing across the segmented short axis, gets the same benefit without a
+detector and matches corrected A.
+
+In practice, these results argue for a specific order of operations. A
+segmentation-based short-axis rule costs nothing to build and is the right
+first baseline. When a few hundred labeled images exist, a fine-tuned
+ResNet is worth the training and outperforms the rule by 20 to 40 points on
+this benchmark. A raw-coordinate query to GPT-4o should not serve as a
+grasp planner, and a numbered menu of candidates does not fix it on its own
+with this model, so a VLM in the loop needs geometry supplied by other
+means, as in the cited pipelines.
 
 The experiment has several limits. It uses one object-wise split of a small
-benchmark, RGB without depth, and no robot trials. Cornell's annotations are
-not exhaustive, so a rectangle that fails the metric might still work on a
-real object. System B also received more development effort: three
+benchmark, RGB without depth, and no robot trials, and the 35-object test
+set gives wide intervals. Cornell's annotations are not exhaustive, so a
+rectangle that fails the metric might still work on a real object. System
+B received more development effort than any other system: three
 architectures, validation-based tuning, and a second training round,
 compared with one frozen prompt for C and D. The test split was opened
 twice for System B, once per round, under rules fixed beforehand, but two
-openings are still two. System D used one glyph style and one candidate
-generator. An early formatting check on about 550 grasp rectangles probably
-included a few images that later entered test, although no parameter or rule
-came from that check. Test inspection also prompted System A's correction.
-Its 40.7\% score is the clean pre-correction result; comparisons
-using 57.7\% are post-hoc. Confirmation requires a fresh split, object-wise
-cross-validation, or a second dataset.
+openings are still two. System C tested one model and one prompt; System D
+used one glyph style and one candidate generator. An early formatting check
+on about 550 grasp rectangles probably included a few images that later
+entered test, although no parameter or rule came from that check. Test
+inspection prompted System A's correction, which is why its clean 40.7\%
+anchors every paired test above. Confirmation requires a fresh split,
+object-wise cross-validation, or a second dataset.
 
 \section{Conclusion}
 
 ResNet18 scored highest at 79.7\%, and 84.0\% averaged over three seeds
-under a stable recipe. The corrected heuristic reached 57.7\%, and GPT-4o
-reached 12.4\% per call. Their error locations add context to that
-ranking. The heuristic often found the object but could not represent
-its angle. ResNet18 usually got the angle and missed the placement. GPT-4o
-often failed before either distinction mattered because its rectangle was not
-near a labeled grasp region.
-
-Given marked candidate grasps instead of a coordinate output, the same model
+under a stable recipe. The heuristic reached 40.7\% clean and 57.7\% after
+a post-hoc correction, and GPT-4o reached 12.4\% per call. On the two focal
+factors: a continuous orientation head removed most of the heuristic's
+angle-only failures, and taking the coordinate output away from GPT-4o did
+not recover its grasp choice. The same model, given marked candidates,
 chose no better than chance on three menus and kept preferring an end pinch
 along the object's long axis even when every mark was drawn the same size.
-The problem is the grasp choice, not its expression. A label-free rule that
-closes across the segmented object's short axis matches the detector-based
-heuristic while handling diagonal objects, and is the cheapest system here
-to build. What remains untested is whether depth input, or a model with a
-stronger three-dimensional prior, changes the choice.
+The problem is the grasp choice, not its expression. What remains untested
+is whether depth input, or a model with a stronger three-dimensional prior,
+changes that choice.
 
 \section*{Acknowledgment}
 
-OpenAI Codex helped restructure, shorten, and edit this manuscript from my
-existing report, code, and verified results. Anthropic Claude Code helped with
-code development, made the first-pass calls on ambiguous object
-boundaries, and implemented the second training round and System D under
-my design. I designed the study, made the research decisions, ran and checked
-the experiments, verified the citations and numerical claims, and approved
-the final text. GPT-4o was evaluated separately as System C in Section III-C.
+I designed the study, chose the three systems and the evaluation protocol,
+built the object-wise split and audited its ambiguous boundaries, ran and
+checked every experiment, verified all numerical claims and citations, and
+wrote and approved the final text. AI coding assistants were used as tools
+under my direction: OpenAI Codex edited and shortened the manuscript from my
+draft and verified results, and Anthropic Claude Code helped implement
+scripts, made a logged first pass on ambiguous object boundaries that I then
+reviewed in full, and implemented the second training round and the System
+D harness to my specification. GPT-4o is not an assistant here; it is the
+model evaluated as Systems C and D.
 
-\balance
 \begin{thebibliography}{00}
 
 \bibitem{jiang2011}

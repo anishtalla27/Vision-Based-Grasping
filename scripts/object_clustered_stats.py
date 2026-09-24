@@ -71,13 +71,18 @@ ALPHA = 0.05
 # --------------------------------------------------------------------
 SYSTEMS = {
     "A": lambda r: float(r["a_correct"]),
+    # pre-correction (clean) System A, added for the ICDM camera-ready;
+    # see system_a_run_precorrection.py. Adding a system does not change
+    # the bootstrap draws, so the original rows reproduce unchanged.
+    "A_pre": lambda r: float(r["a_pre_correct"]),
     "B": lambda r: float(r["b_correct"]),
     "C_pooled": lambda r: int(r["c_repeats_correct"]) / 5.0,
     "C_best5": lambda r: 1.0 if int(r["c_repeats_correct"]) >= 1 else 0.0,
 }
 
 # the comparisons the paper actually makes
-PAIRS = [("B", "A"), ("A", "C_best5"), ("A", "C_pooled"), ("B", "C_pooled")]
+PAIRS = [("B", "A"), ("A", "C_best5"), ("A", "C_pooled"), ("B", "C_pooled"),
+         ("B", "A_pre"), ("A_pre", "C_best5"), ("A_pre", "C_pooled")]
 
 
 def load_by_object(path=PER_IMAGE_CSV):

@@ -79,3 +79,26 @@ Strengths: the topic is important, and the results are counterintuitive and inte
 | 11 | Decide how to report the System B multi-seed rerun (84.0% ResNet34); suggest keeping 79.7% as the headline plus a robustness note | — | Decision |
 
 Everything must still fit in **5 pages**, so adding System D means cutting elsewhere.
+
+---
+
+## Response: what changed in the camera-ready (implemented 24 Sept 2026)
+
+Working file: `icdm2026_teen.tex`. Built PDF: `final_submission/icdm2026_teen.pdf` (5 pages, IEEE CS conference template). New evidence files: `data/interim/orientation_ceiling.md`, `data/interim/system_a_predictions_precorrection.csv`, and an addendum in `data/interim/object_clustered_results.md`. New scripts: `scripts/analysis_orientation_ceiling.py`, `scripts/system_a_run_precorrection.py`.
+
+| Point | Raised by | Change |
+|---|---|---|
+| Coordinate-binding hypothesis untested / underspecified | R1, R4 | System D (already in v2) is now framed from the abstract onward as the test of my own first explanation. The Discussion lists R4's alternative (the model does not understand the coordinate frame or scale) and notes that System D removes coordinates entirely, so every explanation of that family predicted recovery, and none occurred. |
+| Title over-generalizes | R4 | Title now reads "... Zero-Shot GPT-4o Grasp Prediction ...". Abstract sentence 1 names GPT-4o and "one frozen prompt". |
+| 57.7% is post-hoc but still used in stats | R3 | Reproduced the pre-correction run per image (50/123, asserted against the afcd99a commit) and reran the object-clustered stats. All paired tests in the text now use 40.7%: B leads by 39.0 [25.2, 52.9], p < 0.0001; A leads one-call C by 28.3 [16.9, 40.0], p = 0.0001; A vs. best-of-five C is 5.7 [-6.1, 18.0], p = 0.45, which no longer separates. The 57.7% comparisons are kept in one sentence labeled post-hoc. Table 2 has a pre-correction row; Table 3 has a clean column beside the post-hoc one. |
+| "Unified" means I/O + metric, not equal supervision or tuning | R1, R3 | Stated in the abstract and defined in the introduction's second paragraph; repeated in the System B section and in Limitations. |
+| Motivation and explicit comparison to prior work | R2 | Intro paragraph 1 rewritten around the three cheap starting points a practitioner has and why published numbers are not comparable. Related Work now says, per cited method, what this paper does differently. |
+| Too many variables; name one or two | R2 | Intro paragraph 3 names two focal factors: orientation (two angles vs. a continuous head) and the VLM output interface (coordinates vs. a menu). The conclusion answers both. |
+| Practical application | R2 | New paragraph in the Discussion: order of operations for a practitioner (short-axis rule first, fine-tuned ResNet with a few hundred labels, no raw-coordinate VLM planner). |
+| Fraction of test images within ±15° of 0/90 | R4 | Computed from labels: 103/123 (83.7%) within 15°, 118/123 (95.9%) within 30°, the metric's own tolerance. Only five test images are unreachable, so the constraint caps A near 96%, not near its score. Reported in the System A section and discussed under the orientation factor. |
+| Why the 2 images were dropped | R1, R4 | Dataset section: two boundaries had no directional lean after full manual review, so one image on the smaller side of each was excluded rather than guessed; neither was an annotation error. |
+| Number of uncertain boundary calls | R4 | Dataset section: 884 boundaries, 478 auto-same, 155 auto-different, 251 (28.4%) routed to manual review; 30 of those were blind-audited. The count of assistant calls labeled "uncertain" within the 251 lives in the review log, which is not in the repo; the 251 figure is reported instead. |
+| 79.7% competitive with RGB-only literature | R4 | Results now place 79.7% and 84.0% between Lenz et al. (75.6%, object-wise) and Redmon and Angelova (84.9%), both with depth. I did not claim "competitive with RGB-only literature" because modern RGB-only dense detectors score above 95%. |
+| Acknowledgment duplicated, badly typeset, vague on student vs. AI | R3, R4 | Rewritten as one paragraph: what I did, what each assistant did under my direction, and that GPT-4o is the evaluated model, not an assistant. |
+| Modest contribution, narrow evaluation, small sample | R1, R3, R4 | Not contested. Limitations paragraph keeps every item and adds the wide-interval note. |
+
