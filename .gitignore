@@ -78,3 +78,32 @@ data/interim/comparison_sheets/*
 build/
 dist/
 *.egg-info/
+# Keep the System D (Set-of-Mark) and System B round-2 evidence bundles.
+!data/interim/system_d_results.md
+!data/interim/system_d_test_per_image.csv
+!data/interim/system_d_test_summary.json
+!data/interim/system_d_dev_summary.json
+!data/interim/system_d_dev_v2_summary.json
+!data/interim/system_b_v2_results.md
+!data/interim/system_b_v2_per_image.csv
+!data/interim/system_b_v2_predictions_s*.csv
+!data/interim/system_d_test_sparse_per_image.csv
+!data/interim/system_d_test_equal_per_image.csv
+!data/interim/system_d_test_sparse_summary.json
+!data/interim/system_d_test_equal_summary.json
+!data/interim/system_d_dev_v2_sparse_summary.json
+!data/interim/system_d_dev_v2_equal_summary.json
+# Reproducibility bundle: the object-wise split, the clustered statistics, and
+# the verbatim GPT-4o replies for Systems C and D (no keys, no images inside).
+!data/interim/final_split.csv
+!data/interim/boundary_decisions.csv
+!data/interim/object_clustered_results.md
+!data/interim/system_c_raw.jsonl
+!data/interim/system_d_raw.jsonl
+
+# Local-only: backups, scratch, and private personal documents
+output/
+tmp/
+submissions/**/sig_*.png
+submissions/cjsj2026/TallaAnish_form*.pdf
+submissions/cjsj2026/form_fill.tex

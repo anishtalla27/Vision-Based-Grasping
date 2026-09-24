@@ -1,0 +1,25 @@
+import pathlib,re
+p=pathlib.Path("preprint.tex"); s=p.read_text(); misses=[]
+def rep(a,b):
+    global s
+    if a in s: s=s.replace(a,b,1)
+    else: misses.append(a[:60])
+rep("can simply be asked in plain language where to grip.","can be asked in plain language where to grip.")
+rep("are five genuine draws rather than one","are five independent draws and not one")
+rep("is exactly what System C is built to test.","is what System C is built to test.")
+rep("produced exactly the predicted pattern.","produced the predicted pattern.")
+rep("and they are worth keeping in view because","and I keep them in view because")
+rep("It does not simply ask for a picture instead of a","It does not just ask for a picture instead of a")
+rep("stayed genuinely uncertain after full review.","stayed uncertain after full review.")
+rep("are often described rather than scored.","are often described but not scored.")
+rep("expected rather than surprising, since","expected, since")
+rep("One qualification belongs here rather than in Results.","One qualification belongs here and not in Results.")
+rep("to the image's pixels, rather than hand-writing a rule","to the image's pixels, instead of hand-writing a rule")
+rep("physical candidate rather than on its label.","physical candidate and not on its label.")
+rep("own grasp-angle annotations, rather than reporting a single train and","own grasp-angle annotations, instead of reporting a single train and")
+rep("so the count tracks object complexity rather than","so the count tracks object complexity and not")
+rep("It is also a different model rather than the","It is also a different model, not the")
+rep("here rather than only in the text.","here as well as in the text.")
+rep("so the gain belongs to the menu rather than the model.","so the gain belongs to the menu and not to the model.")
+rep("(8 to 25), rather than the fewest, the opposite","(8 to 25), not the fewest, which is the opposite")
+p.write_text(s); print("misses:",misses, "| rather than now:", len(re.findall("rather than",s)))

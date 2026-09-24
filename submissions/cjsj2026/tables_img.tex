@@ -1,0 +1,22 @@
+\documentclass[border=6pt,multi=page]{standalone}
+\usepackage{booktabs}\usepackage{newtxtext}
+\begin{document}
+\begin{page}
+\begin{tabular}{lrr}\toprule
+System & Accuracy & 95\% interval \\ \midrule
+A: rules (40.7\% before fix) & 57.7\% & 46.2 to 68.2 \\
+B: ResNet18, round 1 & 79.7\% & 70.8 to 87.1 \\
+B: ResNet34, round 2 & 84.0\% & 73.9 to 92.1 \\
+C: GPT-4o, one call & 12.4\% & 8.0 to 17.4 \\
+C: GPT-4o, best of five & 35.0\% & 24.6 to 45.5 \\ \bottomrule
+\end{tabular}
+\end{page}
+\begin{page}
+\begin{tabular}{lrrrr}\toprule
+Menu & Correct & Floor & Ceiling & Lengthwise \\ \midrule
+12 marks & 18.7\% & 20.1\% & 79.7\% & 70\% \\
+4 marks, real size & 26.5\% & 24.6\% & 65.9\% & 41\% \\
+4 marks, same size & 22.3\% & 24.6\% & 65.9\% & 45\% \\ \bottomrule
+\end{tabular}
+\end{page}
+\end{document}

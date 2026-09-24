@@ -1,0 +1,20 @@
+{
+  "tag": "dev_v2",
+  "n_images": 30,
+  "repeats": 2,
+  "per_repeat": [
+    13.333333333333334,
+    26.666666666666668
+  ],
+  "mean_acc": 20.0,
+  "best_of": 30.0,
+  "random": 20.0,
+  "geometric": 60.0,
+  "oracle": 90.0,
+  "self_agreement": 0.3793103448275862,
+  "outcomes": {
+    "ok": 58,
+    "no_candidates": 2
+  },
+  "no_candidates": 1
+}

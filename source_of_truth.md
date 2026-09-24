@@ -281,8 +281,55 @@ Things worth carrying into the paper:
 
 Full detail, including the per-repeat breakdown, parse-outcome table, failure taxonomy, self-agreement histogram, and abstention curve at every threshold: `data/interim/system_c_results.md`. Per-call predictions in `system_c_predictions.csv`, per-image consistency data in `system_c_consistency.csv`, 12 comparison sheets in `system_c_sheets/`.
 
-### 10.10 Current status / next step
+### 10.10 System D outcome (Set-of-Mark selection, added 12 September 2026)
+
+The paper's stated open question was whether System C's 12.4% came from asking the model to emit coordinates (the "coordinate-binding hypothesis") or from the model not seeing where to grasp. System D tests it. Same GPT-4o, same sealed test split, same metric, same 5 repeats. The model is shown 12 label-free candidate grasps (from the platform-segmentation mask: PCA centroid and axes, 3 positions x 4 orientations, System A's train-calibrated opening and jaw) drawn on a zoomed crop, and picks one by number. Numbering is re-shuffled every call. Prompt developed on the same 30 train images as System C, two versions (a glyph-convention fix), frozen before test; test called once.
+
+| Measure | Result (object-clustered 95% CI) |
+|---|---|
+| **System D mean per-repeat accuracy** | **18.7%** [9.5, 29.7] |
+| Random choice among the same candidates | 20.1% [14.6, 26.6] |
+| Candidate-set ceiling (any candidate passes) | 79.7% [67.2, 90.0] |
+| Geometric rule alone, no VLM (candidate 0) | 55.3% [41.8, 68.0] |
+| System C, same model, emits coordinates | 12.4% [8.0, 17.4] |
+
+Paired: D minus random -1.4 [-6.6, +4.0] p = 0.62; D minus C +6.3 [-1.6, +15.0] p = 0.19; geometric rule minus System A -2.4 [-10.1, +5.4] p = 0.68.
+
+Things worth carrying into the paper:
+
+- **The hypothesis does not survive.** Removing the coordinate output does not recover the model's grasp choice: its selection is indistinguishable from random on a menu with a 79.7% ceiling. The 53.4% centre-outside-hull rate in System C was therefore not evidence of a binding failure specifically.
+- **The preference is systematic, not noisy.** 61% of choices (342/560) were the single candidate whose jaws travel along the object's long axis near one end, and 70% chose that orientation at some position (passes 17% of the time); the short-axis centroid candidate (passes 61%) was chosen 6% of the time. Reasoning text typically said "grips the narrow top edge". From a top-down photo that grasp looks like it pinches a narrow part; in 3-D the second finger would land on top of the object. This reads as a 2-D-to-3-D grasp-reasoning failure. A rendering-salience explanation (correct marks on thin objects are the smallest marks) is plausible and not ruled out.
+- **Stated confidence is uninformative:** "high" on 556/560 calls, 21% correct.
+- **A non-learned geometric rule with continuous orientation matches System A** (55.3% vs 57.7%) and is the first label-free baseline in the project that can express a diagonal grasp.
+
+- **Follow-up (13 September): the mark-size confound is closed.** Two more sealed runs with four centroid-only candidates, one drawn at real size and one with every mark at a uniform length (prompt says not to scale). Accuracy 26.5% and 22.3% against a shared 24.6% random floor and 65.9% ceiling; neither differs from its floor. With equal-size marks the long-axis orientation is still chosen 45% of the time (chance 25%) and the correct-type short-axis candidate 17%. The preference is the model's, not the drawing's. Three menus, 1,845 calls, all at chance.
+
+Full detail: `data/interim/system_d_results.md`, raw log `system_d_raw.jsonl`, rendered marks `system_d_marked/`, scripts `system_d_*.py`, `object_clustered_stats_d.py`, `object_clustered_stats_d_menus.py`. Cost about $6 of OpenRouter credit across all three menus.
+
+### 10.11 System B round 2 outcome (multi-seed, stable recipe; added 13 September 2026)
+
+Round 1 (10.7) trained each architecture once at seed 42 with a constant learning rate and picked the best of ~100 noisy val epochs. Round 2 keeps the model, loss, data, metric and split, and changes only the training recipe: cosine learning-rate decay over a fixed 100 epochs, an exponential moving average of the weights, three seeds per architecture, and NO checkpoint selection (the headline is the final-epoch averaged weights). Test-time augmentation (8 dihedral views, medoid rectangle) was added and its use decided on val. Test was opened a second time, deliberately and on the record, with all four selection rules written into `scripts/system_b_eval_v2.py` before any round-2 test number existed.
+
+| Configuration | Test accuracy |
+|---|---|
+| **ResNet34, round 2, final averaged weights + TTA (headline)** | **84.0%** mean over 3 seeds (84.6, 83.7, 83.7), sd 0.5; object-clustered CI [73.9, 92.1] |
+| ResNet18, round 2, same | 82.6% (83.7, 80.5, 83.7) |
+| Round 1 recipe re-run, val-best checkpoint, seeds 0 and 1 | 82.9%, 80.5% (round 1 seed 42: 79.7%) |
+
+Paired, object-clustered: round 2 minus System A +26.3 [+14.8, +38.3] p = 0.0002; round 2 minus round 1 +4.3 [-5.8, +13.7] p = 0.43; round 2 minus System C +71.7.
+
+Things worth carrying into the paper:
+
+- Round 1's 79.7% was one sample from a recipe whose seed spread is about 1.6 points on the val-best checkpoint and far larger on the final weights (a re-seeded run's final weights scored 62.6%). It stays on record as round 1.
+- The round-1 claim that ResNet18 beats ResNet34 because 620 images cannot use the larger network's capacity is withdrawn: the two are level under a fair comparison (81.2% vs 81.4% mean final val; 82.6% vs 84.0% test with TTA).
+- Averaged final weights beat the val-selected checkpoint of the same run on 5 of 6 runs, so the checkpoint lottery that inflated round-1 val figures is no longer part of the pipeline.
+- TTA is worth about 3 points, decided on val.
+- A 60-epoch budget was tried first and rejected on val alone (both architectures still climbing at epoch 59); those runs are kept in `system_b_v2/budget60/`.
+
+Full detail: `data/interim/system_b_v2_results.md`, per-seed predictions `system_b_v2_predictions_s*.csv`, per-image `system_b_v2_per_image.csv`, scripts `system_b_train_v2.py`, `system_b_tta.py`, `system_b_eval_v2.py`, `object_clustered_stats_v2.py`.
+
+### 10.12 Current status / next step
 
 Sections 4, 5.1, 5.2, 5.3 and 5.4 are complete. All three systems are sealed: System A 57.7%, System B (ResNet18) 79.7%, System C (GPT-4o) 12.4%, all on the identical 123-image test split. Shared infrastructure (`scripts/cornell_data.py`, `scripts/grasp_metric.py`) has now been reused unchanged across all three independently-built systems.
 
-Next is **Section 6**: the full three-way comparison, with category and condition breakdowns.
+Section 6 (three-way comparison) is complete (`comparison_results.md`). As of 13 September 2026 the record also holds System D (10.10) and System B round 2 (10.11). The working paper draft is `paper.tex`; `submissions/icdm2026_teen/` is the version submitted on 30 August 2026 and predates both additions.

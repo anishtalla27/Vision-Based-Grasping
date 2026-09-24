@@ -1,0 +1,93 @@
+\section*{Acknowledgment}\addcontentsline{toc}{section}{Acknowledgment}
+
+\subsection*{Individual contributions}
+
+This is a single-student project. I, Anish Talla, chose the research
+question, designed the comparison, selected the dataset and the metric,
+wrote the project specification that every later decision was checked
+against, made every research decision, ran and checked every experiment,
+verified the numbers and citations in this report, and wrote and approved
+the final text. No other student took part. My instructor,
+[INSTRUCTOR NAME] of [INSTITUTION], [describe the instructor's role in one
+or two sentences: for example, reviewed the study design before the test
+split was opened, read drafts of the report, and advised on presentation.
+Delete this bracket once filled in].
+
+\subsection*{Use of artificial intelligence tools}
+
+The Award asks for a detailed and truthful account of AI use. Two kinds of
+AI appear in this project and they should not be confused. GPT-4o is the
+object of study: it is the zero-shot model evaluated as System C and
+System D, and every call to it is logged in the raw record described
+below. Separately, AI coding and writing assistants were used as tools
+while doing the work. That second use is what this section discloses.
+
+\textbf{Tools and versions.} Anthropic Claude Code, the command-line
+coding agent, was used from 28 July 2026, when the repository was created,
+through 13 September 2026. The underlying models over that period were
+Anthropic's Claude 4.x series and, in September 2026, Claude Fable 5.1
+[confirm the exact model names from the session history before
+submitting]. OpenAI Codex was used once, in late August 2026, on the
+five-page conference version of this work. GPT-4o (\texttt{openai/gpt-4o}
+through the OpenRouter API, default temperature) is System C and System D
+and was not used as a writing or coding tool.
+
+\textbf{Stages and purposes.} Claude Code was used at the following stages.
+(1) Code development throughout: it drafted, under my direction and
+review, the data-loading and evaluation code, the object-identity
+reconstruction, the three systems, the training scripts including the
+second-round recipe with cosine decay, weight averaging, and test-time
+augmentation, the System D candidate generator, renderer, prompt, and
+runner, and the statistical scripts for the object-clustered bootstrap and
+permutation tests. I specified what each script had to do, read the code,
+and checked its outputs against independent hand calculations; the three
+bugs described in the report were caught this way. (2) Object-boundary
+labeling: in reconstructing object identities, an automated first pass by
+Claude assigned a decision and a confidence to each of the 251 ambiguous
+frame boundaries. In a blind 30-boundary audit its calls agreed with mine
+on 86.7\% of confident cases and 40.0\% of uncertain ones, so I decided
+every uncertain call and every high-risk ``different object'' call
+myself; this is reported in the Methods. (3) Analysis and diagnosis: it
+helped audit the first draft's statistics, which is how the misdefined
+angle-error figure and the single-seed weakness of the first training
+round were found and corrected, and it implemented the second training
+round and System D under a design I set and pre-registered. (4) Writing:
+it helped edit, shorten, and restructure prose that I had drafted, and it
+drafted some passages of the second-round and System D sections from the
+verified results, all of which I revised and approved. OpenAI Codex was
+used only to help restructure and shorten the conference version from my
+existing report, code, and results.
+
+\textbf{Timing and frequency.} Use was frequent: most working sessions
+between 28 July and 13 September 2026 involved the coding assistant, in
+sessions that ranged from minutes to several hours. The heaviest use was
+in the last week of July and first week of August 2026 (building the
+pipeline and the three systems) and on 12 and 13 September 2026 (the
+second training round, System D, and this report's revisions).
+
+\textbf{What AI did not do.} No AI tool chose the research question,
+the dataset, the metric, or the hypotheses. No AI tool wrote the main
+body of this report from nothing; the text was drafted by me and edited
+with assistance. No experimental result was generated, altered, or
+fabricated by an AI tool: every number in this report comes from scripts
+in the repository whose outputs are saved, and the raw GPT-4o replies for
+Systems C and D are kept verbatim in a log of 2,415 calls. No literature
+was cited on the strength of an AI suggestion alone; I read each cited
+paper and checked each reference.
+
+\textbf{Verification materials.} Under ``Other Materials'' I am
+submitting the session transcripts of the Claude Code conversations
+exported from the tool, the raw GPT-4o call log, the source code
+repository, and the saved outputs behind every table. [Export the
+transcripts from \texttt{\textasciitilde/.claude/projects/} before
+submitting and confirm this sentence matches what was uploaded.]
+
+\subsection*{Other assistance and resources}
+
+The Cornell Grasping Dataset was used under its public release. Model
+weights for ResNet and Faster R-CNN came from the torchvision library.
+GPT-4o calls were paid for through an OpenRouter account at a total cost
+of about ten US dollars. Training ran on a personal Apple M4 laptop.
+Experiment tracking used Weights \& Biases. No funding, laboratory,
+commercial training center, or paid service other than the API and
+tracking accounts named above contributed to this work.

@@ -1,0 +1,19 @@
+{
+  "tag": "dev_v2_sparse",
+  "n_images": 30,
+  "repeats": 1,
+  "per_repeat": [
+    33.33333333333333
+  ],
+  "mean_acc": 33.33333333333333,
+  "best_of": 33.33333333333333,
+  "random": 25.0,
+  "geometric": 60.0,
+  "oracle": 73.33333333333333,
+  "self_agreement": null,
+  "outcomes": {
+    "ok": 29,
+    "no_candidates": 1
+  },
+  "no_candidates": 1
+}

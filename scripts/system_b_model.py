@@ -92,7 +92,7 @@ class Heads(nn.Module):
 
 
 class CustomCNN(nn.Module):
-    """From-scratch baseline (spec 5.3 item 1). ~2M parameters.
+    """From-scratch baseline (spec 5.3 item 1). About 1.0M parameters.
 
     BatchNorm is not decoration here: training from scratch on 620
     images is unstable without it.

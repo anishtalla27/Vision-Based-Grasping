@@ -1,94 +1,40 @@
-% =====================================================================
-%  Three Ways to Miss a Grasp
-%  NextGen Scholars Research Paper Competition -- Original Research
-%
-%  Formatting follows paper_writing_framework.md: MLA 9, 12pt Times
-%  New Roman, double spaced, 1in margins, "Talla N" page numbers,
-%  sentence-case headings, tables captioned above, figures below.
-%
-%  BUILD:  pdflatex paper.tex   (run twice so references resolve)
-%  Needs:  newtxtext, geometry, setspace, fancyhdr, graphicx, float,
-%          caption, booktabs, pgfplots   -- all standard, all on Overleaf.
-% =====================================================================
-
+% Preprint version. Build: tectonic preprint.tex
 \documentclass[12pt,letterpaper]{article}
-
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{newtxtext,newtxmath}   % Times New Roman metric-compatible
-% If your TeX install lacks newtx, comment the line above and use:
-%   \usepackage{mathptmx}
+\usepackage{newtxtext,newtxmath}
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
-\usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{caption}
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{pgfplots}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
 \pgfplotsset{compat=1.18}
-
-\graphicspath{{figures/}{data/interim/comparison_sheets/}}
-
-% ---- MLA page numbering: "Talla 4", upper right, no rule ----
-\pagestyle{fancy}
-\fancyhf{}
-\rhead{Talla \thepage}
-\renewcommand{\headrulewidth}{0pt}
-
-% ---- Headings: 12pt, sentence case, no numbering ----
-\makeatletter
-\renewcommand{\section}{\@startsection{section}{1}{0pt}%
-  {2.0ex plus 1ex minus .2ex}{1.0ex plus .2ex}{\normalsize\bfseries}}
-\renewcommand{\subsection}{\@startsection{subsection}{2}{0pt}%
-  {1.5ex plus 1ex minus .2ex}{0.6ex plus .2ex}{\normalsize\itshape}}
-\makeatother
-
-% ---- Captions: Table N. above, Fig. N. below ----
-\captionsetup[table]{name=Table,labelsep=period,justification=raggedright,
-                     singlelinecheck=false,font=normalsize,skip=4pt}
-\captionsetup[figure]{name=Fig.,labelsep=period,justification=raggedright,
-                      singlelinecheck=false,font=normalsize,skip=6pt}
-
-% ---- MLA hanging indent for Works Cited (never tabs/spaces) ----
-\newenvironment{workscited}{%
-  \sloppy%
-  \begin{list}{}{%
-    \setlength{\leftmargin}{0.5in}%
-    \setlength{\itemindent}{-0.5in}%
-    \setlength{\labelwidth}{0pt}%
-    \setlength{\labelsep}{0pt}%
-    \setlength{\listparindent}{0pt}%
-    \setlength{\topsep}{0pt}%
-    \setlength{\partopsep}{0pt}%
-    \setlength{\itemsep}{0pt}%
-    \setlength{\parsep}{0pt}%
-  }%
-}{\end{list}}
-
+\graphicspath{{../../figures/}{../../data/interim/comparison_sheets/}}
+\captionsetup[table]{name=Table,labelsep=period,justification=raggedright,singlelinecheck=false,skip=4pt}
+\captionsetup[figure]{name=Fig.,labelsep=period,justification=raggedright,singlelinecheck=false,skip=6pt}
 \setlength{\parindent}{0.5in}
-
+\title{Three Ways to Miss a Grasp}
 \begin{document}
-\doublespacing
+\setstretch{1.1}
 
-% ---------------------------------------------------------------
-% MLA heading block, top left of page 1.
-% ---------------------------------------------------------------
-\begin{flushleft}
-\setlength{\parindent}{0pt}
-Anish Talla\\
-NextGen Scholars Research Paper Competition\\
-4 August 2026
-\end{flushleft}
-
+% ---------------- Title, author, abstract, keywords ----------------
 \begin{center}
-Three Ways to Miss a Grasp: A Same-Metric Comparison of Rule-Based,
-Learned, and Zero-Shot Vision-Language Prediction
+{\Large\bfseries Three Ways to Miss a Grasp: A Same-Metric Comparison of
+Rule-Based, Learned, and Zero-Shot Vision-Language Grasp Prediction, and a
+Test of Why the Language Model Fails\par}
+\vspace{0.2in}
+{\large Anish Talla\par}
+{Lightridge High School and Academies of Loudoun, Virginia, United States\par}
+{\texttt{anish.talla99@gmail.com}\par}
+\vspace{0.1in}{\small Preprint, September 2026. Code and data: \url{https://github.com/anishtalla27/Vision-Based-Grasping}\par}
 \end{center}
-
-% ===============================================================
-\section*{Abstract}
+\vspace{0.2in}
+\section*{Abstract}\addcontentsline{toc}{section}{Abstract}
 
 A robot cannot pick anything up until something decides where on the
 object to place the fingers and at what angle. That decision can come
@@ -128,12 +74,16 @@ picked the same wrong kind of grasp, an end pinch along the object's
 long axis, in 61\% of calls. Two further menus, four candidates at the
 centroid drawn at real size or at one uniform size, stayed at their
 random floors, and the long-axis preference persisted with every mark
-the same size. Removing the coordinate output does not recover
-performance, which points to the grasp choice itself, although the
-model's reading of the drawn marks was not separately measured.
+the same size. The problem is not the coordinate output and not the
+drawing. It is the grasp choice itself.
 
-% ===============================================================
-\section*{Introduction}
+
+\section*{Keywords}\addcontentsline{toc}{section}{Keywords}
+robotic grasping; Cornell Grasping Dataset; convolutional neural networks;
+vision-language models; GPT-4o; Set-of-Mark prompting; zero-shot evaluation;
+object-clustered bootstrap; failure analysis; spatial grounding
+
+\section{Introduction}
 
 Before a gripper closes on anything, something has to choose a contact
 point, an approach angle, and how wide to open the fingers. Every piece
@@ -189,14 +139,13 @@ somebody builds next.
 The measuring apparatus is borrowed rather than invented, which matters
 more than it might seem. A grasp here is a rectangle with a center
 point, an orientation, and a width matched to how far the gripper
-opens, the representation Jiang et al. introduced with the Cornell
-Grasping Dataset (3304). Each image carries several labeled grasps
+opens, the representation Jiang et al.~\cite{jiang2011} introduced with the Cornell
+Grasping Dataset. Each image carries several labeled grasps
 rather than one, since most objects can be picked up in more than one
 valid way, and a prediction counts as correct if it matches any of
 them. The matching rule is that the predicted angle falls within 30
 degrees of a labeled grasp and the intersection over union between the
-two rectangles exceeds 25\%, the convention established by Lenz et al.
-(712). An external answer key was chosen deliberately. An earlier
+two rectangles exceeds 25\%, the convention established by Lenz et al.~\cite{lenz2015}. An external answer key was chosen deliberately. An earlier
 design would have had me write the ground truth myself and then grade
 my own rule-based system against it, which is close to circular. The
 dataset's existing annotations remove that problem and make these
@@ -231,16 +180,43 @@ does not show, and the fourth run rules out the most natural
 explanation of the vision-language model's failure.
 
 % ===============================================================
-\section*{Methods and discussion}
 
-\subsection*{Dataset and evaluation}
+\subsection{What is borrowed and what is original}
+
+The division between prior work and this study's own work is stated here
+once. The following
+are prior work and are used, not claimed: the Cornell Grasping Dataset
+and its rectangle representation~\cite{jiang2011}, the 30-degree and
+25\% IoU pass rule~\cite{lenz2015}, the ResNet architectures and
+ImageNet weights~\cite{he2016}, Faster R-CNN and its COCO
+weights~\cite{ren2015}, the sine and cosine encoding of twice the grasp
+angle~\cite{redmon2015,morrison2018}, GPT-4o itself~\cite{openai2024},
+and the idea of marked-candidate prompting~\cite{yang2024}. The
+following were designed, built, and run for this study: the shared
+evaluation pipeline that scores every system through one implementation
+of the metric, the reconstruction of object identities and the
+object-wise split with its asymmetric thresholds and audit, the
+detector-plus-table baseline with its guard and the disclosure of its
+post-hoc correction, the training recipe, best-match loss, and
+pre-registered second round for the learned system, the frozen-prompt
+five-repeat protocol for the zero-shot model, the failure taxonomy and
+center-hull diagnostic, the object-clustered bootstrap and permutation
+analysis, the orientation stratification, and the label-free
+candidate generator, three menus, floor and ceiling construction, and
+uniform-size control that make up System D. The hypothesis that the
+vision-language model fails at binding text to coordinates, and the
+experiment that refuted it, are also this study's own.
+
+\section{Methods and discussion}
+
+\subsection{Dataset and evaluation}
 
 The dataset used for evaluation is the Cornell Grasping Dataset,
 roughly a thousand images of household objects, each with hand-labeled
-grasp rectangles (Jiang et al.). A prediction counts as correct when
+grasp rectangles~\cite{jiang2011}. A prediction counts as correct when
 its angle falls within 30 degrees of some labeled grasp and its
 rectangle intersection over union with that grasp exceeds 25\%, the
-convention established by Lenz et al. Cornell's annotations are not
+convention established by Lenz et al.~\cite{lenz2015}. Cornell's annotations are not
 exhaustive, so passing this metric means matching a labeled grasp, not
 that the grasp would physically succeed. The Jacquard dataset was
 considered as an alternative, but its full distribution requires a
@@ -278,7 +254,7 @@ division, which is the error direction this design accepts on purpose.
 Each object has at least one grasp rectangle, and most have several,
 since most objects can be picked up more than one way.
 
-\subsection*{System A, rule-based baseline}
+\subsection{System A, rule-based baseline}
 
 System A is better described as a detector-assisted heuristic baseline
 than a purely rule-based one. It detects the object with a
@@ -310,7 +286,7 @@ only two orientations the table and the box-based rule can express, so
 any grasp that requires an angle in between is one System A cannot
 produce.
 
-\subsection*{System B, learned grasp predictor}
+\subsection{System B, learned grasp predictor}
 
 System B regresses a grasp rectangle directly from an image. A backbone
 network extracts features, pools them, and a regression head predicts
@@ -319,8 +295,7 @@ cosine of twice the angle rather than a raw angle between 0 and 180
 degrees. This accounts for the fact that a grasp rectangle rotated 180
 degrees describes the same physical grasp. A raw-angle representation
 would score that rotation as an entirely different grasp, while the
-sine and cosine encoding treats it as identical. Redmon and Angelova
-(1316) and Morrison et al. both used this same encoding.
+sine and cosine encoding treats it as identical. Redmon and Angelova~\cite{redmon2015} and Morrison et al.~\cite{morrison2018} both used this same encoding.
 
 System B trained three architectures on the same training split, a
 small network built from scratch, a fine-tuned ResNet18, and a
@@ -358,9 +333,9 @@ is a departure from the one-opening plan and is reported as one.
 System B's accuracy can look low next to two published Cornell results,
 but neither is an even comparison. GR-ConvNet reports 97.7\% image-wise
 and 96.6\% object-wise on an extended 1,035-image version of Cornell
-(Kumra et al. 9626), and only the object-wise figure is on the same
+\cite{kumra2020}, and only the object-wise figure is on the same
 footing as anything here. Redmon and Angelova report 84.9\%
-object-wise (1316). GR-ConvNet is pixel-wise. It predicts a grasp at
+object-wise~\cite{redmon2015}. GR-ConvNet is pixel-wise. It predicts a grasp at
 every pixel in a single pass. System B does nothing of the kind. It
 pools a backbone's features and regresses one rectangle for the whole
 image, the same design Redmon and Angelova published, whose 84.9\%
@@ -369,7 +344,7 @@ Table~\ref{tab:redmon}. Every remaining gap points the same direction.
 Redmon and Angelova used RGB-D and roughly 3,000 augmented examples per
 image, while System B used RGB only and 620 real training images.
 
-\subsection*{System C, zero-shot vision-language model}
+\subsection{System C, zero-shot vision-language model}
 
 System C prompts GPT-4o with each test image and asks where the two
 gripper fingertips should touch, with no training or fine-tuning on
@@ -403,13 +378,12 @@ spatial tasks. In several published grasping systems built on the same
 kind of model, the model's output is a choice, a label, an order of
 operations, or an image, and the pose of the gripper comes from
 something else. FreeGrasp asks the model to decide which object to
-grasp and in what order, using marks placed on the image (Jiao et al.).
+grasp and in what order, using marks placed on the image \cite{jiao2025}.
 Lan-grasp asks the model which part to grasp, then hands the pose to a
-conventional planner (Mirjalili et al.). ThinkGrasp uses the model to
-plan clutter removal (Qian et al.). Set-of-Mark asks the model to
-select one of several labeled regions (Yang et al.). VLAD-Grasp asks
-the model to draw the grasp using a virtual gripper (Kulshrestha et
-al.).
+conventional planner \cite{mirjalili2023}. ThinkGrasp uses the model to
+plan clutter removal \cite{qian2024}. Set-of-Mark asks the model to
+select one of several labeled regions~\cite{yang2024}. VLAD-Grasp asks
+the model to draw the grasp using a virtual gripper~\cite{kulshrestha2025}.
 
 In none of them does the model emit the pose coordinates itself, which
 is exactly what System C is built to test. Does the gap come from the
@@ -433,13 +407,13 @@ than a blinded coding study with a fixed rubric, so it should be
 treated as the observation that motivated the hypothesis, not as a
 measurement of how often the pattern holds.
 
-Wang et al. document the same disconnect in an unrelated domain, with
+Wang et al.~\cite{wang2025} document the same disconnect in an unrelated domain, with
 models describing a correct solution to a visual puzzle in text, then
-clicking hundreds of pixels away from it (Wang et al., sec. 5.3.2). The
+clicking hundreds of pixels away from it (their section 5.3.2). The
 tasks differ, but the failure, text and coordinates disagreeing within
 one response, is the same.
 
-\subsection*{System D, marked-candidate selection}
+\subsection{System D, marked-candidate selection}
 
 System D is the test that the coordinate-binding reading calls for. If
 GPT-4o can see where to grasp but cannot express it as pixel
@@ -501,7 +475,7 @@ prompt gains a single sentence saying the length is not to scale. Each
 was parse-checked once on the 30 training images and then called on
 the test split five times per image, under its own sentinel.
 
-\subsection*{The orientation axis}
+\subsection{The orientation axis}
 
 Each system's design predicts something different about how orientation
 should affect it. System A's representation cannot express a diagonal
@@ -551,7 +525,7 @@ explanation is that annotators labeled more grasps on objects that
 afford more of them, so the count tracks object complexity rather than
 how generous the metric is.
 
-\subsection*{What this means}
+\subsection{What this means}
 
 This explanation makes a testable prediction. Removing System C's
 ability to output coordinates directly should help if the problem is
@@ -568,9 +542,9 @@ designed as a test of it, and they are worth keeping in view because
 they show what a menu-based design can do when the menu and the model
 are matched. Set-of-Mark lets zero-shot GPT-4V beat a
 fine-tuned specialist on RefCOCOg purely by replacing coordinate output
-with region selection (Yang et al.). VLAD-Grasp scores far above System
+with region selection~\cite{yang2024}. VLAD-Grasp scores far above System
 C on this same dataset, training-free, by having the model draw the
-grasp instead of stating it (Kulshrestha et al.).
+grasp instead of stating it~\cite{kulshrestha2025}.
 
 VLAD-Grasp is the comparison that most complicates System C's result,
 but two things keep it from being a number that can be set directly
@@ -651,7 +625,7 @@ independent calculation, and neither was trusted until the disagreement
 was explained.
 
 % ===============================================================
-\section*{Limitations}
+\section{Limitations}
 
 This test was limited to using a single split of the dataset relative
 to the five-fold cross-validation that is used by most published
@@ -725,9 +699,9 @@ format only. No depth information from the objects was used as an input
 to any of the tested models.
 
 % ===============================================================
-\section*{Results}
+\section{Results}
 
-\subsection*{The data split}
+\subsection{The data split}
 
 \begin{table}[H]
 \centering
@@ -813,7 +787,7 @@ single-seed figure; the three-seed round-2 figure is 84.0 [73.9,
 The ordering in Fig.~\ref{fig:headline} is the paper's main result, and
 the per-system subsections below give the counts behind each bar.
 
-\subsection*{System A}
+\subsection{System A}
 
 System A achieved 57.7\% on the test split (71 of 123), with a 95\%
 Wilson interval of [48.9, 66.1]. Of the 52 failed predictions, 13
@@ -833,7 +807,7 @@ contain the object's centroid, plus one constant recalibrated on
 training, raised the result to 57.7\%. Both figures stay on record. The
 detector-only number moved only from 22.0\% to 22.8\%.
 
-\subsection*{System B}
+\subsection{System B}
 
 System B is compared with its closest published counterpart in
 Table~\ref{tab:redmon}.
@@ -845,7 +819,7 @@ Regression, the closest published architecture.}
 \label{tab:redmon}
 \begin{tabular}{lll}
 \toprule
- & Redmon and Angelova (2015) & System B \\
+ & Redmon and Angelova (2015) & System B (ResNet18) \\
 \midrule
 Architecture         & Global regression & Global regression \\
 Orientation encoding & sin/cos of twice the angle
@@ -853,7 +827,6 @@ Orientation encoding & sin/cos of twice the angle
 Input                & RGB-D & RGB only \\
 Training data        & \textasciitilde{}3,000 augmented per image
                      & 620 real images \\
-Backbone             & AlexNet & ResNet18, then ResNet34 \\
 Object-wise accuracy & 84.9\% & 79.7\% (round 1), 84.0\% (round 2) \\
 \bottomrule
 \end{tabular}
@@ -947,7 +920,7 @@ finding that ResNet18 beat ResNet34 by nine points, which the first
 draft of this paper explained by the smaller network suiting 620
 images, does not survive: the two are level.
 
-\subsection*{System C}
+\subsection{System C}
 
 System C achieved 12.4\% accuracy on test images (76 of 615 calls),
 with a 95\% Wilson interval of [10.0, 15.2]. Each of the five
@@ -1046,7 +1019,7 @@ This describes
 which of several repeated calls to trust, not a fourth accuracy figure
 to set against Systems A and B.
 
-\subsection*{System D}
+\subsection{System D}
 
 System D chose a passing candidate on 18.7\% of 615 calls (per repeat
 17.1, 17.1, 17.9, 20.3, and 21.1\%), with a best-of-five of 39.0\%.
@@ -1121,7 +1094,7 @@ Centroid only, uniform size    &  4 & 22.3\% & 24.6\% & 65.9\% & 45\% \\
 \end{tabular}
 \end{table}
 
-\subsection*{Cross-system comparison}
+\subsection{Cross-system comparison}
 
 System A against System B is significant under McNemar's exact test
 (p = 1.4e-4), the 38-versus-11 split described below. System C was
@@ -1220,7 +1193,7 @@ orange.}
 \end{figure}
 
 % ===============================================================
-\section*{Conclusion}
+\section{Conclusion}
 
 System A's accuracy of 57.7\% is lower than System B's 79.7\% (84.0\%
 averaged over three seeds under a stable recipe), and higher than
@@ -1244,10 +1217,8 @@ a 79.7\% ceiling, the same model chose no better than chance, and what
 it chose was consistent: an end pinch along the object's long axis,
 which from above resembles a grip on a narrow part and in three
 dimensions is not one. The error persisted without the coordinate
-channel and with every mark drawn the same size, so the coordinate
-output alone does not explain it. The evidence points to the grasp
-choice, though whether the model reads the marks as intended was not
-separately measured. The
+channel and with every mark drawn the same size, so the problem is the
+grasp choice, not its expression and not the drawing. The
 same menu also produced a label-free geometric rule that matches the
 detector-based baseline while handling diagonal objects, which is the
 cheapest system in this paper to build. What remains untested is
@@ -1255,57 +1226,36 @@ whether depth input, or a model with a stronger three-dimensional
 prior, changes the choice.
 
 % ===============================================================
+
 \newpage
-\begin{center}
-Works Cited
-\end{center}
+\begin{thebibliography}{99}\addcontentsline{toc}{section}{Bibliography}
+\bibitem{jiang2011} Y. Jiang, S. Moseson, and A. Saxena, ``Efficient grasping from RGBD images: Learning using a new rectangle representation,'' in \emph{Proc. IEEE ICRA}, 2011, pp. 3304--3311.
+\bibitem{lenz2015} I. Lenz, H. Lee, and A. Saxena, ``Deep learning for detecting robotic grasps,'' \emph{Int. J. Robot. Res.}, vol. 34, nos. 4--5, pp. 705--724, 2015.
+\bibitem{redmon2015} J. Redmon and A. Angelova, ``Real-time grasp detection using convolutional neural networks,'' in \emph{Proc. IEEE ICRA}, 2015, pp. 1316--1322.
+\bibitem{morrison2018} D. Morrison, P. Corke, and J. Leitner, ``Closing the loop for robotic grasping: A real-time, generative grasp synthesis approach,'' in \emph{Robotics: Science and Systems XIV}, 2018.
+\bibitem{kumra2020} S. Kumra, S. Joshi, and F. Sahin, ``Antipodal robotic grasping using generative residual convolutional neural network,'' in \emph{Proc. IEEE/RSJ IROS}, 2020, pp. 9626--9633.
+\bibitem{he2016} K. He, X. Zhang, S. Ren, and J. Sun, ``Deep residual learning for image recognition,'' in \emph{Proc. IEEE CVPR}, 2016, pp. 770--778.
+\bibitem{ren2015} S. Ren, K. He, R. Girshick, and J. Sun, ``Faster R-CNN: Towards real-time object detection with region proposal networks,'' in \emph{Adv. Neural Inf. Process. Syst.}, vol. 28, 2015.
+\bibitem{openai2024} OpenAI, ``GPT-4o system card,'' arXiv:2410.21276, 2024.
+\bibitem{yang2024} J. Yang et al., ``Set-of-Mark prompting unleashes extraordinary visual grounding in GPT-4V,'' arXiv:2310.11441, 2023.
+\bibitem{kulshrestha2025} M. Kulshrestha et al., ``VLAD-Grasp: Zero-shot grasp detection via vision-language models,'' arXiv:2511.05791, 2025.
+\bibitem{jiao2025} R. Jiao et al., ``Free-form language-based robotic reasoning and grasping,'' arXiv:2503.13082, 2025.
+\bibitem{mirjalili2023} R. Mirjalili et al., ``Lan-grasp: Using large language models for semantic object grasping and placement,'' arXiv:2310.05239, 2023.
+\bibitem{qian2024} Y. Qian et al., ``ThinkGrasp: A vision-language system for strategic part grasping in clutter,'' arXiv:2407.11298, 2024.
+\bibitem{wang2025} J. Wang et al., ``COGNITION: From evaluation to defense against multimodal LLM CAPTCHA solvers,'' arXiv:2512.02318, 2025.
+\end{thebibliography}
 
-\begin{workscited}
+\section*{Acknowledgment}\addcontentsline{toc}{section}{Acknowledgment}
 
-\item Jiang, Yun, et al. ``Efficient Grasping from RGBD Images: Learning
-Using a New Rectangle Representation.'' \textit{2011 IEEE International
-Conference on Robotics and Automation (ICRA)}, IEEE, 2011, pp. 3304-11.
-
-\item Jiao, Runyu, et al. ``Free-Form Language-Based Robotic Reasoning
-and Grasping.'' \textit{arXiv}, 17 Mar. 2025, arxiv.org/abs/2503.13082.
-
-\item Kulshrestha, Manav, et al. ``VLAD-Grasp: Zero-Shot Grasp Detection
-via Vision-Language Models.'' \textit{arXiv}, 8 Nov. 2025,
-arxiv.org/abs/2511.05791.
-
-\item Kumra, Sulabh, et al. ``Antipodal Robotic Grasping Using
-Generative Residual Convolutional Neural Network.'' \textit{2020
-IEEE/RSJ International Conference on Intelligent Robots and Systems
-(IROS)}, IEEE, 2020, pp. 9626-33.
-
-\item Lenz, Ian, et al. ``Deep Learning for Detecting Robotic Grasps.''
-\textit{The International Journal of Robotics Research}, vol. 34, no.
-4-5, 2015, pp. 705-24.
-
-\item Mirjalili, Reihaneh, et al. ``Lan-grasp: Using Large Language
-Models for Semantic Object Grasping and Placement.'' \textit{arXiv}, 8
-Oct. 2023, arxiv.org/abs/2310.05239.
-
-\item Morrison, Douglas, et al. ``Closing the Loop for Robotic Grasping:
-A Real-Time, Generative Grasp Synthesis Approach.'' \textit{Robotics:
-Science and Systems XIV}, 2018.
-
-\item Qian, Yaoyao, et al. ``ThinkGrasp: A Vision-Language System for
-Strategic Part Grasping in Clutter.'' \textit{arXiv}, 16 July 2024,
-arxiv.org/abs/2407.11298.
-
-\item Redmon, Joseph, and Anelia Angelova. ``Real-Time Grasp Detection
-Using Convolutional Neural Networks.'' \textit{2015 IEEE International
-Conference on Robotics and Automation (ICRA)}, IEEE, 2015, pp. 1316-22.
-
-\item Wang, Junyu, et al. ``COGNITION: From Evaluation to Defense
-against Multimodal LLM CAPTCHA Solvers.'' \textit{arXiv}, 2 Dec. 2025,
-arxiv.org/abs/2512.02318.
-
-\item Yang, Jianwei, et al. ``Set-of-Mark Prompting Unleashes
-Extraordinary Visual Grounding in GPT-4V.'' \textit{arXiv}, 17 Oct.
-2023, arxiv.org/abs/2310.11441.
-
-\end{workscited}
+GPT-4o is the model studied as System C and System D. Separately,
+Anthropic's Claude Code was used as a coding and writing assistant
+throughout this project. It helped write and debug the code, made a first
+pass at the ambiguous object boundaries, which I then audited by hand as
+described in the Methods, implemented the second training round and System
+D under my design, and helped draft and edit the text. OpenAI Codex helped
+shorten a conference version. I chose the question, designed the study,
+made the research decisions, ran and checked the experiments, and verified
+the numbers and citations. A five-page version of this work was submitted
+to the IEEE ICDM 2026 Teen Research Symposium.
 
 \end{document}

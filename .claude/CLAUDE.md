@@ -1,21 +1,13 @@
 # Session rules (hard rules, not suggestions)
 
-## Canary
-Every single message in this session/project must begin with the literal word
-"Anish," before anything else. This is a canary the user relies on: if this
-word is ever missing from the start of a response, it signals that context
-got lost or compacted, and the user will restart the session. Do not drop
-this rule after compaction, summarization, or a long gap in the
-conversation — it applies for the rest of this project, not just one message.
-
 ## Git / GitHub pushes
-NEVER run `git push` (or any command that publishes commits to the remote,
-e.g. `gh repo create` with auto-push, force-push, tag push) in this project,
-under any circumstances or phrasing of the request. The user pushes to
-GitHub manually themselves, always. Creating commits locally, adding/
-inspecting remotes, and other local git operations are fine — only the
-push action itself is off-limits. If asked to push, remind the user of this
-rule and stop there. Also never commit files to github as well. 
+Claude may commit and push to GitHub in this project, but only as the user's
+own identity: git author/committer "Anish Talla" and the GitHub account
+`anishtalla27`. Never push or commit as Claude:
+- Do NOT add `Co-Authored-By: Claude ...` or any Claude/AI attribution
+  trailer to commit messages or PR descriptions.
+- Do NOT change git user.name / user.email or switch GitHub accounts.
+- No force-push unless the user explicitly asks for it.
 
 The remote is configured as `origin` ->
 https://github.com/anishtalla27/Vision-Based-Grasping.git
