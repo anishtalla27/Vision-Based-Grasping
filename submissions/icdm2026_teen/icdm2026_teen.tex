@@ -28,13 +28,14 @@ a general-purpose vision-language model (VLM), used zero-shot. The protocol
 fixes the test images, input, output representation, and scoring rule on an
 object-wise split of the Cornell Grasping Dataset. It does not equalize
 supervision or tuning, so it compares complete pipelines. ResNet18 passed on
-79.7\% of test images (84.0\% in a second, three-seed training round). The
+79.7\% of test images, and a second, three-seed round reached 84.0\% with
+ResNet34. The
 heuristic passed on 40.7\% as frozen and on 57.7\% after a fix prompted by
 test output; every statistical comparison uses the clean 40.7\%. GPT-4o
 passed on 12.4\% of calls across five independent runs per image. Under
 object-clustered resampling, ResNet18 led the heuristic by 39.0 points and
-the heuristic led one-call GPT-4o by 28.3. The errors differed. ResNet18
-missed mostly on placement, while GPT-4o failed both criteria on 59.3\% of
+the heuristic led one-call GPT-4o by 28.3. ResNet18 missed mostly on
+placement, while GPT-4o failed both criteria on 59.3\% of
 calls and put its predicted center outside the hull of all labeled grasp
 corners on 53.4\%. That pattern suggested GPT-4o might see a good grasp but
 fail to write it as coordinates. A fourth run tested this by showing the same
@@ -134,8 +135,9 @@ Of the 884 frame boundaries, 251 (28.4\%) fell in the ambiguous band. An
 automated first pass gave each one a decision and a confidence. In a blind
 30-boundary audit, its calls agreed with my labels on 86.7\% of confident
 cases but only 40.0\% of uncertain ones, so its uncertain calls were not
-used. I decided 139 boundaries by hand, covering every uncertain call and
-every high-risk ``different object'' call, and accepted the other 112
+used. I decided 139 boundaries by hand, covering every uncertain call, every
+high-risk ``different object'' call, and every call whose reasoning used a
+flagged error pattern, and accepted the other 112
 confident same-object calls, where an error can only merge groups. Six
 boundaries stayed ambiguous after review. Four leaned toward ``same object''
 and were merged. The other two had no lean, so instead of guessing I dropped
@@ -167,7 +169,7 @@ Sys. & Grasp labels & Scaffolding & Development & Test runs \\
 A & 3 constants & detector, mask & fixed table & 2 (1 post-hoc) \\
 B & 620 train & none & 3 nets, 2 rounds & 2 (rules fixed) \\
 C & none & none & 1 prompt & 1 \\
-D & A's constants & mask, marks & 1 prompt, 3 menus & 3 (1 per menu) \\
+D & A's constants & mask, marks & 2 prompts, 3 menus & 3 (1 per menu) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -252,10 +254,12 @@ ceiling (whether any candidate passes).
 
 Three menus were run, each on the full test split with five repeats: twelve
 marks at three positions; four marks at the centroid only, drawn at real
-size; and the same four marks drawn at one uniform length, with the prompt
-stating that length is not to scale. The last two exist because on thin
+size; and the same four marks drawn at one uniform length, with one added
+prompt sentence stating that length is not to scale. Eleven test images have
+no mask and so no candidates; they count as misses in accuracy, floor, and
+ceiling, leaving 560 calls per menu. The last two exist because on thin
 objects the correct marks are the smallest on the image, so a preference for
-large marks would mimic a preference for the long-axis grasp. The prompt was
+large marks would mimic a preference for the long-axis grasp. The prompts were
 developed on 30 training images for parse rate and glyph reading only, and
 each menu's test run was called once under its own sentinel.
 
@@ -333,7 +337,7 @@ missed only the angle test. That is partly built in, since A can output only
 $0^\circ$ or $90^\circ$, but the limit is loose: only 5 test images (4.1\%)
 have no labeled grasp within the metric's $30^\circ$ of either axis, and 103
 (83.7\%) have one within $15^\circ$. On the 20 images whose labeled grasps
-all lie more than $15^\circ$ from both axes, corrected A passed 40.0\%,
+all lie more than $15^\circ$ from both axes, post-hoc A passed 40.0\%,
 against 61.2\% on the rest. B had four angle-only failures; 15 of its 25
 misses failed only on overlap, so placement was its larger problem. C failed
 both tests on 365 of 615 calls (59.3\%).
@@ -358,7 +362,7 @@ No prediction & 8 (6.5) & 8 (6.5) & 0 (0.0) & 1 (0.2) \\
 \end{tabular}
 \end{table}
 
-The center-hull check shows where C's failures begin. Corrected A landed
+The center-hull check shows where C's failures begin. Post-hoc A landed
 outside the hull on 8 of 115 predictions (7.0\%) and B on 8 of 123 (6.5\%);
 C did so on 328 of 614 parsed calls (53.4\%). Figure~\ref{fig:comparison}
 shows the shared coordinate frame on one image. This is not an even contest
@@ -453,8 +457,9 @@ background clutter, while the label-free short-axis rule, a post-hoc
 baseline, scored 55.3\%.
 Zero-shot GPT-4o should not be the source of grasp geometry, whether asked
 for coordinates or for a choice among marks. Its stated confidence, ``high'' on
-556 of 560 System D calls, cannot filter bad grasps, and repeated calls on
-one image agreed on only 22\% of rectangles. A VLM in a grasping system should leave the geometric decision
+556 of 560 full-menu calls, cannot filter bad grasps, and repeated calls on
+one image agreed on only 22\% of rectangles. A VLM in a grasping system
+should leave the geometric decision
 to another component, as VLAD-Grasp does with depth and point-cloud
 alignment \cite{kulshrestha2025}. For evaluation practice, the 17-point move
 from one test-prompted fix shows why the clean number should carry the
@@ -470,7 +475,7 @@ needed to confirm the ranking. Cornell's annotations are not exhaustive, so a
 rectangle that fails the metric might still work on a real object. The
 development budgets differ (Table~\ref{tab:inputs}). B received three
 architectures, validation tuning, and a second training round, against one
-frozen prompt for C and one per menu for D. The test split was opened twice
+frozen prompt for C and two near-identical prompts for D. The test split was opened twice
 for B under rules fixed beforehand, and twice for A, whose second result is
 post-hoc. System D used one glyph style and one candidate generator. An early
 formatting check on about 550 grasp rectangles probably included a few images
@@ -478,8 +483,8 @@ that later entered test, although no parameter or rule came from that check.
 
 \section{Conclusion}
 
-Under one fixed input, output, and metric, ResNet18 scored 79.7\% (84.0\%
-over three seeds in a second round), the frozen heuristic 40.7\% (57.7\%
+Under one fixed input, output, and metric, ResNet18 scored 79.7\% (ResNet34
+reached 84.0\% over three seeds in a second round), the frozen heuristic 40.7\% (57.7\%
 after a post-hoc fix), and GPT-4o 12.4\% per call. Their error locations add
 context to that ranking. The frozen heuristic often acted on background
 clutter, ResNet18 usually got the angle and missed the placement, and GPT-4o
