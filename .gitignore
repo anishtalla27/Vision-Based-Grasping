@@ -100,6 +100,10 @@ dist/
 !data/interim/object_clustered_results.md
 !data/interim/system_c_raw.jsonl
 !data/interim/system_d_raw.jsonl
+# Camera-ready (ICDM 2026): System A's clean pre-amendment predictions,
+# regenerated from commit afcd99a, and the statistics computed on them.
+!data/interim/system_a_v1_predictions.csv
+!data/interim/object_clustered_clean_a_results.md
 
 # Local-only: backups, scratch, and private personal documents
 output/
